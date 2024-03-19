@@ -1,11 +1,11 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm,RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
     TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
-
+from app.config import Config
 
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
@@ -21,6 +21,7 @@ class RegistrationForm(FlaskForm):
         _l('Confirm password'), validators=[DataRequired(),
                                            EqualTo('password')])
     email = StringField(_l('Email address (recommended)'), validators=[DataRequired(), Email()])
+    recaptcha=RecaptchaField(_l('CAPTCHA Security check'))
     submit = SubmitField(_l('Create your account'))
 
     def validate_username(self, username):

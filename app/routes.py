@@ -71,7 +71,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html.j2', title=_('Sign In'), form=form)
+    return render_template('login.html.j2', title=_('Log in'), form=form)
 
 
 @app.route('/logout')

@@ -19,16 +19,21 @@
       </button>
       <a class="navbar-brand" href="{{ url_for('index') }}">Wikipedia</a>
     </div>
+
+
+
+
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li>
-          <a href="{{ url_for('index') }}">{{ _('Home') }}</a>
+          <form class="d-flex" action="{{ url_for('search') }}" role="search" style="display: inline-flex;">
+            <input class="form-control me-2" type="search" placeholder="{{ _('Search Wikipedia',) }}" aria-label="Search" name="q">
+            <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
+          </form>
         </li>
+
         <li>
-          <a href="{{ url_for('explore') }}">{{ _('Explore') }}</a>
-        </li>
-        <li>
-        {# dropdown
+          {# dropdown
           <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
             aria-expanded="false">
             Dropdown
@@ -52,10 +57,10 @@
         </li>
         {% else %}
         <li>
-          <a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
+          <a href="{{ url_for('user', username=current_user.username) }}">{{ _(current_user.username) }}</a>
         </li>
         <li>
-          <a href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
+          <a href="{{ url_for('logout') }}">{{ _('Log out') }}</a>
         </li>
         {% endif %}
       </ul>

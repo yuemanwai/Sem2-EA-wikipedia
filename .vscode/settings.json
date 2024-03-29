@@ -1,5 +1,5 @@
 {
     "[jinja-html]": {
-        "editor.defaultFormatter": "monosans.djlint"
+        "editor.defaultFormatter": "vscode.html-language-features"
     }
 }

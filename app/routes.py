@@ -17,9 +17,17 @@ def before_request():
         db.session.commit()
     g.locale = str(get_locale())
 
+# main page
+# @app.route('/', methods=['GET'])
+# @app.route('/wiki/Main_Page', methods=['GET'])
+# def index():
+#     posts = user.followed_posts().paginate(
+#         page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+#     return render_template('index.html.j2', title=_('Wikipedia, the free encyclopedia'), posts=posts.items)
+
 
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+@app.route('/wiki/Main_Page', methods=['GET', 'POST'])
 @login_required
 def index():
     form = PostForm()

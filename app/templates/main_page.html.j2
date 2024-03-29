@@ -1,0 +1,11 @@
+{% extends "base.html.j2" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+    <h1>{{ _('Welcome to Wikipedia,<br>
+the free encyclopedia that anyone can edit.<br>
+%(numofposts)d articles in English', numofposts=post.count()) }}</h1>
+    {% for post in posts %}
+        {% include "_post.html.j2" %}
+    {% endfor %}
+
+{% endblock %}

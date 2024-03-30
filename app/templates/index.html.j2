@@ -1,10 +1,15 @@
 {% extends "base.html.j2" %}
 {% block app_content %}
-    <h4 style="text-align: center;">{{ _('Welcome to Wikipedia,<br>
-the free encyclopedia that anyone can edit.<br>
-%(numofposts)d articles in English', numofposts=posts|length) }}</h4>
-    {% for post in posts %}
-        {% include "_post.html.j2" %}
-    {% endfor %}
+
+<h4 style="text-align: center;">
+  {{ _('Welcome to') }} <a href="{{ url_for('index') }}">{{ _('Wikipedia') }}</a>,<br>
+  {{ _('the free encyclopedia that anyone can edit.') }}<br>
+  <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in English') }}
+</h4>
+
+
+{% for post in posts %}
+{% include "_post.html.j2" %}
+{% endfor %}
 
 {% endblock %}

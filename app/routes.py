@@ -49,7 +49,7 @@ def logout():
     return render_template('logout.html.j2', title=_('Log out'))
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/CreateAccount', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -61,7 +61,7 @@ def register():
         db.session.commit()
         flash(_('Congratulations, you are now a registered user!'))
         return redirect(url_for('login'))
-    return render_template('register.html.j2', title=_('Register'), form=form)
+    return render_template('register.html.j2', title=_('Create account'), form=form)
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -157,4 +157,4 @@ def unfollow(username):
 def search():
     keyword = request.args.get('q')
     results = 'testing'
-    return render_template('search.html.j2', results=results, keyword=keyword)
+    return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)

@@ -35,21 +35,21 @@ class UserModelCase(unittest.TestCase):
         db.session.add(u1)
         db.session.add(u2)
         db.session.commit()
-        self.assertEqual(u1.followed.all(), [])
+        self.assertEqual(u1.star_ed.all(), [])
         self.assertEqual(u1.followers.all(), [])
 
         u1.follow(u2)
         db.session.commit()
         self.assertTrue(u1.is_following(u2))
-        self.assertEqual(u1.followed.count(), 1)
-        self.assertEqual(u1.followed.first().username, 'susan')
+        self.assertEqual(u1.star_ed.count(), 1)
+        self.assertEqual(u1.star_ed.first().username, 'susan')
         self.assertEqual(u2.followers.count(), 1)
         self.assertEqual(u2.followers.first().username, 'john')
 
         u1.unfollow(u2)
         db.session.commit()
         self.assertFalse(u1.is_following(u2))
-        self.assertEqual(u1.followed.count(), 0)
+        self.assertEqual(u1.star_ed.count(), 0)
         self.assertEqual(u2.followers.count(), 0)
 
     def test_follow_posts(self):

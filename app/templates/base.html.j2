@@ -1,67 +1,278 @@
 {% extends 'bootstrap/base.html' %}
-{% block title %}
-    {% if title %}
-        {{ title }} - Microblog
-    {% else %}
-        {{ _('Welcome to Microblog') }}
-    {% endif %}
+
+{% block head %}
+{{super()}}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<style>
+  .icon-link::before {
+    font-size: 18px;
+    /* 调整图标的大小 */
+  }
+
+  .no-bullets {
+    list-style-type: none;
+  }
+
+  .sidebar {
+    padding-top: 50px;
+  }
+
+  .sidebar>div {
+    text-align: left;
+  }
+
+  .sidebar hr {
+    margin-left: auto;
+    margin-right: auto;
+    margin: 10px 0;
+  }
+
+  .content {
+    padding-bottom: 50px;
+  }
+
+  .footer {
+
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  /* 自定义媒体查询 */
+  @media (max-width: 991.98px) {
+    .hide-on-small-screen {
+      display: none;
+    }
+  }
+</style>
 {% endblock %}
+
+{% block title %}
+{% if title %}
+{{ title }}{{ _(' - Wikipedia') }}
+{% else %}
+{{ _('Welcome to Wikipedia') }}
+{% endif %}
+{% endblock title %}
+
 {% block navbar %}
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button"
-                        class="navbar-toggle collapsed"
-                        data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1"
-                        aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">Microblog</a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="{{ url_for('index') }}">{{ _('Home') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('explore') }}">{{ _('Explore') }}</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_anonymous %}
-                        <li>
-                            <a href="{{ url_for('login') }}">{{ _('Login') }}</a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+<div class="container-fluid">
+  <nav class="navbar navbar-default navbar-fullwidth" style="padding: 0 30px;">
+    {# Fixed Elements #}
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="./img/WikiLogo.jpg" alt="" class="d-inline-block align-text-top">
+        {{_('Wikipedia')}}
+      </a>
+    </div>
+
+    {# 拆疊區域 左方 #}
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li>
+          <form class="d-flex" action="{{ url_for('search') }}" role="search"
+            style="display: inline-flex;width: 350px;padding: 8px 0px;">
+            <span class="icon">
+              {# <i class="fa-solid fa-magnifying-glass" style="font-size: 20px;margin-top:8px;color: gray;"></i> #}
+            </span>
+            <input class="form-control me-2" type="search" placeholder="{{ _('Search Wikipedia',) }}"
+              aria-label="Search" name="q">
+            <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
+          </form>
+        </li>
+      </ul>
+
+      {# 拆疊區域 右方 #}
+      <ul class="nav navbar-nav navbar-right">
+        {% if current_user.is_anonymous %}
+        <li>
+          <a href="{{ url_for('register') }}">{{ _('Create account') }}</a>
+        </li>
+        <li>
+          <a href="{{ url_for('login') }}">{{ _('Log in') }}</a>
+        </li>
+        {% else %}
+        <li>
+          <a href="{{ url_for('user', username=current_user.username) }}">{{ _(current_user.username) }}</a>
+        </li>
+        <li>
+          <a href="{{ url_for('index') }}">
+            <i class="fa-solid fa-bell" style="font-size: 20px; "></i>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('index') }}">
+            <i class="fa-solid fa-inbox" style="font-size: 20px; "></i>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('index') }}">
+            <i class="fa-regular fa-star" style="font-size: 20px; "></i>
+          </a>
+        </li>
+        <li>
+          <div class="dropdown" style="margin-top: 12px;">
+            <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fa-solid fa-user"></i><i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+              <li><a class="dropdown-item" href="#"> <i class="fa-regular fa-comments" style="font-size: 20px; "></i>
+                  {{ _('Talk') }}</a></li>
+              <li><a class="dropdown-item" href="#"> <i class="fa-regular fa-pen-to-square"
+                    style="font-size: 20px; "></i>
+                  {{ _('Sandbox') }}</a></li>
+              <li><a class="dropdown-item" href="#"> <i class="fa-solid fa-gear" style="font-size: 20px; "></i>
+                  {{ _('Preferences') }}</a></li>
+              <li><a class="dropdown-item" href="#"> <i class="fa-solid fa-flask" style="font-size: 20px; "></i>
+                  {{ _('Beta') }}</a></li>
+              <li><a class="dropdown-item" href="#"> <i class="fa-solid fa-users-between-lines"
+                    style="font-size: 20px; "></i>
+                  {{ _('Contributions') }}</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('logout') }}"> <i class="fa-solid fa-right-from-bracket"
+                    style="font-size: 20px; "></i>
+                  {{ _('Log out') }}</a></li>
+            </ul>
+          </div>
+        </li>
+
+
+        {% endif %}
+      </ul>
+    </div>
+</div>
+</nav>
 {% endblock %}
 {% block content %}
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}<div class="alert alert-info" role="alert">{{ message }}</div>{% endfor %}
-            {% endif %}
-        {% endwith %}
-        {# application content needs to be provided in the app_content block #}
-        {% block app_content %}{% endblock %}
+<div class="content container-fluid">
+  <div class="row">
+    <div class="sidebar col-md-2 hide-on-small-screen">
+      <div>
+        <!-- 左邊sidebar -->
+        <ul class="no-bullets">
+          <li><b>{{_('Main menu')}}</b></li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Main page') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Contents') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Current events') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Random article') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('About Wikipedia') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Contact us') }}</a></li>
+          <br>
+          <li>{{_('Contribute')}}</li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Help') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Learn to edit') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Community portal') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Recent changes') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Upload file') }}</a></li>
+        </ul>
+      </div>
     </div>
-{% endblock %}
+    <div class="col-md-8">
+      <div class="content">
+        <!-- 中間內容 -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block app_content %} {% endblock %}
+      </div>
+    </div>
+
+    <div class="col-md-2 hide-on-small-screen">
+      <!-- 右邊sidebar -->
+      <div class="sidebar">
+        <ul class="no-bullets">
+          <li><b>{{_('Tools')}}</b></li>
+          <hr>
+          <li>{{_('General')}}</li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('What links here') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Related changes') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Special pages') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Permanent link') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Page information') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Get shortened URL') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Download QR code') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikidata item') }}</a></li>
+          <br>
+          <li>{{_('Print/export')}}</li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Download as PDF') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Printable version') }}</a></li>
+          <br>
+          <li>{{_('In other projects')}}</li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimedia Commons') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimedia Foundation') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('MediaWiki') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Meta-Wiki') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimedia Outreach') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Multilingual Wikisource') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikispecies') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikibooks') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikidata') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikifunctions') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimania') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikinews') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikiquote') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikisource') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikiversity') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikivoyage') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wiktionary') }}</a></li>
+
+        </ul>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% block footer %}
+<footer class="footer">
+  <div class="container-fluid">
+    <div>
+      <hr>
+      <a href="#">About Wikipedia</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Disclaimers</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Wikipedia Code of Conduct</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Developers</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Statistics</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Cookie statement</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Mobile view</a>
+    </div>
+  </div>
+</footer>
+{% endblock footer %}
+{% endblock content %}
+
+
 {% block scripts %}
-    {{ super() }}
-    {{ moment.include_moment() }}
-    {{ moment.lang(g.locale) }}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang(g.locale) }}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
+
 {% endblock %}

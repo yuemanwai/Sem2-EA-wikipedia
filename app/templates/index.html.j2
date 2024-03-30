@@ -1,26 +1,15 @@
 {% extends "base.html.j2" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
-    <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
-    {% if form %}
-        {{ wtf.quick_form(form) }}
-        <br/>
-    {% endif %}
-    {% for post in posts %}
-        {% include "_post.html.j2" %}
-    {% endfor %}
-    <nav aria-label="...">
-        <ul class="pager">
-            <li class="previous{% if not prev_url %} disabled{% endif %}">
-                <a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
-                </a>
-            </li>
-            <li class="next{% if not next_url %} disabled{% endif %}">
-                <a href="{{ next_url or '#' }}">
-                    {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+
+<h4 style="text-align: center;">
+  {{ _('Welcome to') }} <a href="{{ url_for('index') }}">{{ _('Wikipedia') }}</a>,<br>
+  {{ _('the free encyclopedia that anyone can edit.') }}<br>
+  <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in English') }}
+</h4>
+
+
+{% for post in posts %}
+{% include "_post.html.j2" %}
+{% endfor %}
+
 {% endblock %}

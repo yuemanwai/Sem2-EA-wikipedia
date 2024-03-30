@@ -18,42 +18,11 @@ def before_request():
     g.locale = str(get_locale())
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-@login_required
+@app.route('/', methods=['GET'])
+@app.route('/wiki/Main_Page', methods=['GET'])
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash(_('Your post is now live!'))
-        return redirect(url_for('index'))
-    page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for(
-        'index', page=posts.next_num) if posts.next_num else None
-    prev_url = url_for(
-        'index', page=posts.prev_num) if posts.prev_num else None
-    return render_template('index.html.j2', title=_('Home'), form=form,
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
-
-
-@app.route('/explore')
-@login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for(
-        'explore', page=posts.next_num) if posts.next_num else None
-    prev_url = url_for(
-        'explore', page=posts.prev_num) if posts.prev_num else None
-    return render_template('index.html.j2', title=_('Explore'),
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+    posts = Post.query.order_by(Post.create_time.desc()).all()
+    return render_template('index.html.j2', title=_('Wikipedia, the free encyclopedia'), posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -71,16 +40,16 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html.j2', title=_('Sign In'), form=form)
+    return render_template('login.html.j2', title=_('Log in'), form=form)
 
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return render_template('logout.html.j2', title=_('Log out'))
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/CreateAccount', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -92,7 +61,7 @@ def register():
         db.session.commit()
         flash(_('Congratulations, you are now a registered user!'))
         return redirect(url_for('login'))
-    return render_template('register.html.j2', title=_('Register'), form=form)
+    return render_template('register.html.j2', title=_('Create account'), form=form)
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -127,19 +96,13 @@ def reset_password(token):
     return render_template('reset_password.html.j2', form=form)
 
 
-@app.route('/user/<username>')
+@app.route('/homepage/<username>')
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    page = request.args.get('page', 1, type=int)
-    posts = user.followed_posts().paginate(
-        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for(
-        'index', page=posts.next_num) if posts.next_num else None
-    prev_url = url_for(
-        'index', page=posts.prev_num) if posts.prev_num else None
-    return render_template('user.html.j2', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    # page = request.args.get('page', 1, type=int)
+    posts = user.followed_posts().all()
+    return render_template('index.html.j2', user=user, posts=posts)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -189,3 +152,9 @@ def unfollow(username):
     db.session.commit()
     flash(_('You are not following %(username)s.', username=username))
     return redirect(url_for('user', username=username))
+
+@app.route('/search')
+def search():
+    keyword = request.args.get('q')
+    results = 'testing'
+    return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)

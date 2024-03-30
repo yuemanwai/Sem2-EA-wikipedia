@@ -1,27 +1,28 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm,RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
     TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
-
+from app.config import Config
 
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
-    remember_me = BooleanField(_l('Remember Me'))
-    submit = SubmitField(_l('Sign In'))
+    remember_me = BooleanField(_l('Keep me logged in (for up to one year)'))
+    submit = SubmitField(_l('Log in'))
 
 
 class RegistrationForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
-    email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     password2 = PasswordField(
-        _l('Repeat Password'), validators=[DataRequired(),
+        _l('Confirm password'), validators=[DataRequired(),
                                            EqualTo('password')])
-    submit = SubmitField(_l('Register'))
+    email = StringField(_l('Email address (recommended)'), validators=[DataRequired(), Email()])
+    recaptcha=RecaptchaField(_l('CAPTCHA Security check'))
+    submit = SubmitField(_l('Create your account'))
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()

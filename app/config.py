@@ -16,3 +16,5 @@ class Config(object):
     ADMINS = ['cywong@example.com']
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'es', 'zh']
+    RECAPTCHA_PUBLIC_KEY='no-key'
+    RECAPTCHA_PRIVATE_KEY='no-key'

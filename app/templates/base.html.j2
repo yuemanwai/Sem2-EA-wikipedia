@@ -7,7 +7,6 @@
 <style>
   .icon-link::before {
     font-size: 18px;
-    /* 调整图标的大小 */
   }
 
   .no-bullets {
@@ -43,7 +42,6 @@
     font-size: 12px;
   }
 
-  /* 自定义媒体查询 */
   @media (max-width: 991.98px) {
     .hide-on-small-screen {
       display: none;
@@ -73,7 +71,10 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="{{ url_for('index') }}">
-        <img src="./img/WikiLogo.jpg" alt="" class="d-inline-block align-text-top">
+        {# <img src="./img/WikiLogo.jpg" alt="" class="d-inline-block align-text-top"> #}
+
+          <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
+
         {{_('Wikipedia')}}
       </a>
     </div>

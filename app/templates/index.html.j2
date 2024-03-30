@@ -1,8 +1,8 @@
 {% extends "base.html.j2" %}
 {% block app_content %}
-    <h1>{{ _('Welcome to Wikipedia,<br>
+    <h4 style="text-align: center;">{{ _('Welcome to Wikipedia,<br>
 the free encyclopedia that anyone can edit.<br>
-%(numofposts)d articles in English', numofposts=posts|length) }}</h1>
+%(numofposts)d articles in English', numofposts=posts|length) }}</h4>
     {% for post in posts %}
         {% include "_post.html.j2" %}
     {% endfor %}

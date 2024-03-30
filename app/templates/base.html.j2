@@ -1,4 +1,34 @@
 {% extends 'bootstrap/base.html' %}
+
+{% block head %}
+{{super()}}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<style>
+  .no-bullets {
+    list-style-type: none;
+  }
+
+  .sidebar {
+    text-align: center;
+    padding-top: 50px;
+  }
+
+  .sidebar hr {
+    margin-left: auto;
+    margin-right: auto;
+    margin: 10px 0;
+  }
+
+  /* 自定义媒体查询 */
+  @media (max-width: 991.98px) {
+    .hide-on-small-screen {
+      display: none;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block title %}
 {% if title %}
 {{ title }}{{ _(' - Wikipedia') }}
@@ -6,9 +36,13 @@
 {{ _('Welcome to Wikipedia') }}
 {% endif %}
 {% endblock title %}
+
+{# Dropdown/sidebar list here ? #}
+
 {% block navbar %}
-<nav class="navbar navbar-default">
-  <div class="container">
+<div class="container-fluid">
+  <nav class="navbar navbar-default navbar-fullwidth" style="padding: 0 30px;">
+    {# Fixed Elements #}
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
         data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -17,34 +51,23 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{ url_for('index') }}">Wikipedia</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">{{_('Wikipedia')}}</a>
     </div>
 
-
-
-
+    {# 拆疊區域 左方 #}
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li>
-          <form class="d-flex" action="{{ url_for('search') }}" role="search" style="display: inline-flex;">
-            <input class="form-control me-2" type="search" placeholder="{{ _('Search Wikipedia',) }}" aria-label="Search" name="q">
+          <form class="d-flex" action="{{ url_for('search') }}" role="search"
+            style="display: inline-flex;width: 350px;padding: 8px 0px;">
+            <input class="form-control me-2" type="search" placeholder="{{ _('Search Wikipedia',) }}"
+              aria-label="Search" name="q">
             <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
           </form>
         </li>
-
-        <li>
-          {# dropdown
-          <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul> #}
-        </li>
       </ul>
+
+      {# 拆疊區域 右方 #}
       <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_anonymous %}
         <li>
@@ -65,22 +88,79 @@
         {% endif %}
       </ul>
     </div>
-  </div>
+</div>
 </nav>
 {% endblock %}
 {% block content %}
-<div class="container">
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-  {% for message in messages %}<div class="alert alert-info" role="alert">{{ message }}</div>{% endfor %}
-  {% endif %}
-  {% endwith %}
-  {# application content needs to be provided in the app_content block #}
-  {% block app_content %}{% endblock %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="sidebar col-md-2 hide-on-small-screen">
+      <!-- Left side -->
+      <b>{{_('Main menu')}}</b>
+      <hr>
+      <ul class="no-bullets">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+      </ul>
+    </div>
+
+    <div class="col-md-8">
+      <div class="content">
+        <!-- 中間內容 -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block app_content %} {% endblock %}
+      </div>
+    </div>
+
+    <div class="col-md-2 hide-on-small-screen">
+      <!-- Right side -->
+      <div class="sidebar">
+      <b>{{_('Tools')}}</b>
+      <hr>
+      <ul class="no-bullets">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+      </ul>
 </div>
+    </div>
+  </div>
+</div>
+{% block footer %}
+<div class="container-fluid">
+  <div style="padding: 0 30px;font-size: 12px;">
+    <hr>
+    <a href="#">About Wikipedia</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Disclaimers</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Contact</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Wikipedia Code of Conduct</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Developers</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Statistics</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Cookie statement</a>&nbsp;&nbsp;&nbsp;
+    <a href="#">Mobile view</a>
+  </div>
+</div>
+{% endblock footer %}
 {% endblock %}
+
+
 {% block scripts %}
 {{ super() }}
 {{ moment.include_moment() }}
 {{ moment.lang(g.locale) }}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+
 {% endblock %}

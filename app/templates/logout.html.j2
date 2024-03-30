@@ -1,0 +1,13 @@
+{% extends "base.html.j2" %}
+{% block app_content %}
+<h2>{{ _("Log out") }}</h2>
+<br />
+<hr>
+<p style="text-align: right;">{{_('Tools')}}</p>
+<hr>
+<p>{{_('You are now logged out. This device may be used to browse and edit Wikipedia without a username, or for another user
+    to log in. Note that some pages may continue to be displayed as if you were still logged in; this can be fixed by
+    clearing your browser cache.')}}</p>
+<p>{{_('Return to ')}}<a href="{{ url_for('index') }}">{{_('Main Page.')}}</a></p>
+
+{% endblock %}

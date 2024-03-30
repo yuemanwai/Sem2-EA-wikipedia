@@ -10,14 +10,31 @@
   }
 
   .sidebar {
-    text-align: center;
     padding-top: 50px;
+  }
+
+  .sidebar>div {
+    text-align: left;
   }
 
   .sidebar hr {
     margin-left: auto;
     margin-right: auto;
     margin: 10px 0;
+  }
+
+  .content {
+    padding-bottom: 50px;
+  }
+
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    text-align: center;
+    font-size: 12px;
   }
 
   /* 自定义媒体查询 */
@@ -51,7 +68,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{ url_for('index') }}">{{_('Wikipedia')}}</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="./img/WikiLogo.jpg" alt="" class="d-inline-block align-text-top">
+        {{_('Wikipedia')}}
+      </a>
     </div>
 
     {# 拆疊區域 左方 #}
@@ -92,19 +112,31 @@
 </nav>
 {% endblock %}
 {% block content %}
-<div class="container-fluid">
+<div class="content container-fluid">
   <div class="row">
     <div class="sidebar col-md-2 hide-on-small-screen">
-      <!-- Left side -->
-      <b>{{_('Main menu')}}</b>
-      <hr>
-      <ul class="no-bullets">
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-      </ul>
+      <div>
+        <!-- Left side -->
+        <ul class="no-bullets">
+          <li><b>{{_('Main menu')}}</b></li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Main page') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Contents') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Current events') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Random article') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('About Wikipedia') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Contact us') }}</a></li>
+          <br>
+          <li><b>{{_('Contribute')}}</b></li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Help') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Learn to edit') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Community portal') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Recent changes') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Upload file') }}</a></li>
+        </ul>
+      </div>
     </div>
-
     <div class="col-md-8">
       <div class="content">
         <!-- 中間內容 -->
@@ -122,33 +154,69 @@
     <div class="col-md-2 hide-on-small-screen">
       <!-- Right side -->
       <div class="sidebar">
-      <b>{{_('Tools')}}</b>
-      <hr>
-      <ul class="no-bullets">
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-      </ul>
-</div>
+        <ul class="no-bullets">
+          <li><b>{{_('Tools')}}</b></li>
+          <hr>
+          <li><b>{{_('General')}}</b></li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('What links here') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Related changes') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Special pages') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Permanent link') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Page information') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Get shortened URL') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Download QR code') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikidata item') }}</a></li>
+          <br>
+          <li><b>{{_('Print/export')}}</b></li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Download as PDF') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Printable version') }}</a></li>
+          <br>
+          <li><b>{{_('In other projects')}}</b></li>
+          <hr>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimedia Commons') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimedia Foundation') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('MediaWiki') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Meta-Wiki') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimedia Outreach') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Multilingual Wikisource') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikispecies') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikibooks') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikidata') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikifunctions') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikimania') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikinews') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikiquote') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikisource') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikiversity') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wikivoyage') }}</a></li>
+          <li><a href="{{ url_for('index') }}">{{ _('Wiktionary') }}</a></li>
+
+        </ul>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
 {% block footer %}
-<div class="container-fluid">
-  <div style="padding: 0 30px;font-size: 12px;">
-    <hr>
-    <a href="#">About Wikipedia</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Disclaimers</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Contact</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Wikipedia Code of Conduct</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Developers</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Statistics</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Cookie statement</a>&nbsp;&nbsp;&nbsp;
-    <a href="#">Mobile view</a>
+<footer class="footer">
+  <div class="container-fluid">
+    <div>
+      <hr>
+      <a href="#">About Wikipedia</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Disclaimers</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Wikipedia Code of Conduct</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Developers</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Statistics</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Cookie statement</a>&nbsp;&nbsp;&nbsp;
+      <a href="#">Mobile view</a>
+    </div>
   </div>
-</div>
+</footer>
 {% endblock footer %}
-{% endblock %}
+{% endblock content %}
 
 
 {% block scripts %}
@@ -161,6 +229,6 @@
   integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
   integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-
+<script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
 
 {% endblock %}

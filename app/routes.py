@@ -169,18 +169,10 @@ def watchlist():
 def get_random_post():
     # 统计数据库中的行数
     count = Post.query.count()
-
     if count == 0:
         return None
-
     # 隨機生成一个ID
     random_id = random.randint(1, count)
-
     # 根據ID獲取對應的文章
     random_post = Post.query.get(random_id)
-
-    # if random_post:
-    #     # 將 內容轉換為HTML
-    #     random_post.body = markdown.markdown(random_post.body)
-    
     return render_template('random_post.html.j2', post=random_post)

@@ -9,7 +9,6 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
 from app.models import User, Post
 from app.email import send_password_reset_email
 import random
-import markdown
 
 @app.before_request
 def before_request():
@@ -174,14 +173,14 @@ def get_random_post():
     if count == 0:
         return None
 
-    # 随机生成一个ID
+    # 隨機生成一个ID
     random_id = random.randint(1, count)
 
-    # 根据ID获取对应的文章
+    # 根據ID獲取對應的文章
     random_post = Post.query.get(random_id)
 
-    if random_post:
-        # 将Markdown内容转换为HTML
-        random_post.body = markdown.markdown(random_post.body)
+    # if random_post:
+    #     # 將 內容轉換為HTML
+    #     random_post.body = markdown.markdown(random_post.body)
     
-    return render_template('random_post.html.j2', title=random_post.title,posts=[random_post])
+    return render_template('random_post.html.j2', post=random_post)

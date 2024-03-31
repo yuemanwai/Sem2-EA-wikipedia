@@ -16,9 +16,11 @@ db.session.add(u2)
 
 p1 = Post(title='USA',body='body1')
 p2 = Post(title='HK',body='body1')
+p3 = Post(title='test-markdown',body='<cite>Smith, John. "Example Cite web citation." Example.com. Retrieved March 31, 2024. <a href="https://www.example.com">https://www.example.com</a></cite>')
 # u1.follow(p1)
 # u2.follow(p2)
 db.session.add(p1)
 db.session.add(p2)
+db.session.add(p3)
 
 db.session.commit()

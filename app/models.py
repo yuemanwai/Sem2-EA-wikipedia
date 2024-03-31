@@ -83,7 +83,7 @@ def load_user(id):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140), index=True, unique=True)
-    body = db.Column(db.String(140))
+    body = db.Column(db.String(2000))
     create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     follower = db.relationship(

@@ -32,7 +32,7 @@
   }
 
   .footer {
-
+    position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
@@ -48,7 +48,7 @@
     }
   }
 </style>
-{% endblock %}
+{% endblock head %}
 
 {% block title %}
 {% if title %}
@@ -73,7 +73,7 @@
       <a class="navbar-brand" href="{{ url_for('index') }}">
         {# <img src="./img/WikiLogo.jpg" alt="" class="d-inline-block align-text-top"> #}
 
-          <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
+        <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
 
         {{_('Wikipedia')}}
       </a>
@@ -119,7 +119,7 @@
           </a>
         </li>
         <li>
-          <a href="{{ url_for('index') }}">
+          <a href="{{ url_for('watchlist') }}">
             <i class="fa-regular fa-star" style="font-size: 20px; "></i>
           </a>
         </li>
@@ -155,7 +155,8 @@
     </div>
 </div>
 </nav>
-{% endblock %}
+{% endblock navbar %}
+
 {% block content %}
 <div class="content container-fluid">
   <div class="row">
@@ -192,7 +193,7 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        {% block app_content %} {% endblock %}
+        {% block app_content %} {% endblock app_content %}
       </div>
     </div>
 
@@ -244,7 +245,6 @@
     </div>
   </div>
 </div>
-{% block footer %}
 <footer class="footer">
   <div class="container-fluid">
     <div>
@@ -260,8 +260,7 @@
     </div>
   </div>
 </footer>
-{% endblock footer %}
-{% endblock content %}
+{% endblock %}
 
 
 {% block scripts %}

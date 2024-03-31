@@ -60,7 +60,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash(_('Congratulations, you are now a registered user!'))
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
     return render_template('register.html.j2', title=_('Create account'), form=form)
 
 
@@ -158,3 +158,8 @@ def search():
     keyword = request.args.get('q')
     results = 'testing'
     return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)
+
+@app.route('/Watchlist')
+@login_required
+def watchlist():
+    return render_template('watchlist.html.j2', title=_('Watchlist'))

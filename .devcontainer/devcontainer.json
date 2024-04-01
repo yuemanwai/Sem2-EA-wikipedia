@@ -7,12 +7,9 @@
   },
   "waitFor": "onCreateCommand",
   "postCreateCommand": "",
-  "postAttachCommand": [
-    "flask db migrate",
-    "flask db upgrade",
-    "flask --debug run --host=0.0.0.0",
-    "python test_data.py"
-],
+  "postAttachCommand": {
+    "server":"flask --debug run --host=0.0.0.0"
+  },
   "portsAttributes": {
     "5000": {
       "label": "Flask Apps",

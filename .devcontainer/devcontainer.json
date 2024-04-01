@@ -8,10 +8,7 @@
   "waitFor": "onCreateCommand",
   "postCreateCommand": "",
   "postAttachCommand": {
-    "db-migrate": "flask db migrate",
-    "db-upgrade": "flask db upgrade",
-    "server": "flask --debug run --host=0.0.0.0",
-    "test-data": "python test_data.py"
+    "server":  ["flask db migrate","flask db upgrade","flask --debug run --host=0.0.0.0","python test_data.py"]
   },
   "portsAttributes": {
     "5000": {

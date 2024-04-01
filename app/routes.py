@@ -165,14 +165,34 @@ def watchlist():
     return render_template('watchlist.html.j2', title=_('Watchlist'))
 
 
-@app.route('/wiki/RandomPost')
-def get_random_post():
+# @app.route('/wiki/<path:article_title>')
+# def random_article():
+#     # 统计数据库中的行数
+#     count = Post.query.count()
+#     if not count:
+#         return render_template('random_post.html.j2', title=random_post.article_title, posts=[random_post])
+#     # 隨機生成一个ID
+#     random_id = random.randint(1, count)
+#     # 根據ID獲取對應的文章
+#     random_post = Post.query.get(random_id)
+#     return render_template('random_article.html.j2', title=random_post.article_title, posts=[random_post])
+
+@app.route('/random_article')
+def get_random_article():
     # 统计数据库中的行数
     count = Post.query.count()
-    if count == 0:
-        return None
-    # 隨機生成一个ID
-    random_id = random.randint(1, count)
-    # 根據ID獲取對應的文章
-    random_post = Post.query.get(random_id)
-    return render_template('random_post.html.j2', post=random_post)
+    if count:
+        # 隨機生成一个ID
+        random_id = random.randint(1, count)
+        # 根据ID获取对应的文章
+        random_article = Post.query.get(random_id)
+        if random_article:
+            article_title = random_article.article_title
+            return redirect(url_for('wiki', article_title=article_title))
+    flash('Article not found')
+    return redirect(url_for('index'))
+
+@app.route('/wiki/<article_title>')
+def wiki(article_title):
+    article =  Post.query.filter_by(article_title=article_title).first()
+    return render_template('random_article.html.j2', title=article_title, posts=[article])

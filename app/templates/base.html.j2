@@ -184,7 +184,7 @@
           <li><a href="{{ url_for('index') }}">{{ _('Main page') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('Contents') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('Current events') }}</a></li>
-          <li><a href="{{ url_for('get_random_post') }}">{{ _('Random article') }}</a></li>
+          <li><a href="{{ url_for('get_random_article') }}">{{ _('Random article') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('About Wikipedia') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('Contact us') }}</a></li>
           <br>
@@ -260,6 +260,7 @@
     </div>
   </div>
 </div>
+{% block footer %}
 <footer class="footer">
   <div class="container-fluid">
     <div>
@@ -275,7 +276,8 @@
     </div>
   </div>
 </footer>
-{% endblock %}
+{% endblock footer %}
+{% endblock content %}
 
 
 {% block scripts %}

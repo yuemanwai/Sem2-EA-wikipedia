@@ -50,8 +50,8 @@
 {% endblock head %}
 
 {% block title %}
-{% if title == "Wikipedia, the free encyclopedia" %}
-{{ title }}
+{% if title == "Main_Page" %}
+{{_('Wikipedia, the free encyclopedia') }}
 {% else %}
 {{ title }}{{ _(' - Wikipedia') }}
 {% endif %}
@@ -70,9 +70,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="{{ url_for('index') }}">
-
         <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
-
         {{_('Wikipedia')}}
       </a>
     </div>
@@ -207,7 +205,7 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        {% if title != "Wikipedia, the free encyclopedia" %}
+        {% if title != "Main_Page" %}
         <h2>{{ title }}</h2>
         <hr>
         {% else %}

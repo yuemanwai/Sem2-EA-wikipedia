@@ -22,7 +22,7 @@ def before_request():
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
     posts = Post.query.order_by(Post.create_time.desc()).all()
-    return render_template('index.html.j2', title=_('Wikipedia, the free encyclopedia'), posts=posts)
+    return render_template('index.html.j2', title=_('Main_Page'), posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -100,7 +100,6 @@ def reset_password(token):
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    # page = request.args.get('page', 1, type=int)
     posts = user.followed_posts().all()
     return render_template('index.html.j2', user=user, posts=posts)
 
@@ -122,33 +121,25 @@ def user(username):
 #                            form=form)
 
 
-# @app.route('/follow/<username>')
-# @login_required
-# def follow(username):
-#     user = User.query.filter_by(username=username).first()
-#     if user is None:
-#         flash(_('User %(username)s not found.', username=username))
-#         return redirect(url_for('index'))
-#     current_user.follow(user)
-#     db.session.commit()
-#     flash(_('You are following %(username)s!', username=username))
-#     return redirect(url_for('user', username=username))
+@app.route('/follow/<title>', methods=['POST'])
+@login_required
+def follow(title):
+    article = Post.query.filter_by(article_title=title).first()
+    current_user.follow(article)
+    db.session.commit()
+    following_article=True
+    flash(_('<%(title)s> and its talk page have been added to your watchlist permanently.', title=title))
+    return redirect(url_for('wiki', title=title, following_article=following_article))
 
-
-# @app.route('/unfollow/<username>')
-# @login_required
-# def unfollow(username):
-#     user = User.query.filter_by(username=username).first()
-#     if user is None:
-#         flash(_('User %(username)s not found.', username=username))
-#         return redirect(url_for('index'))
-#     if user == current_user:
-#         flash(_('You cannot unfollow yourself!'))
-#         return redirect(url_for('user', username=username))
-#     current_user.unfollow(user)
-#     db.session.commit()
-#     flash(_('You are not following %(username)s.', username=username))
-#     return redirect(url_for('user', username=username))
+@app.route('/unfollow/<title>', methods=['POST'])
+@login_required
+def unfollow(title):
+    article = Post.query.filter_by(article_title=title).first()
+    current_user.unfollow(article)
+    db.session.commit()
+    following_article=False
+    flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
+    return redirect(url_for('wiki', title=title,following_article=following_article))
 
 @app.route('/search')
 def search():
@@ -177,5 +168,8 @@ def get_random_article():
 @app.route('/wiki/<article_title>')
 def wiki(article_title):
     article =  Post.query.filter_by(article_title=article_title).first()
-    return render_template('random_article.html.j2', title=article_title, posts=[article])
+    following_article = None
+    if current_user.is_authenticated:
+        following_article = current_user.is_following(article)
+    return render_template('random_article.html.j2', title=article_title, posts=[article], following_article=following_article)
 

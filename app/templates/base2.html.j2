@@ -20,8 +20,8 @@
     <!-- main page 子層 -->
     <div id="mainpage" class="tab-pane fade in active">
       <div>
-        {# 這裏强行用transform把子層向上移, 和父層重疊了, 但會把main page和talk button擋住了 #}
-        {# 被我拿掉了 style="transform: translate(0px, -42px);" #}
+        {# 這裏强行用transform把子層向上移, 和父層重疊了, 但會把內容全都顯示出來 #}
+        {# 被我拿掉了 style="float: right;transform: translate(0px, -42px);" #}
         <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#mainpage_read">{{ _('Read') }}</a></li>
           <li><a data-toggle="tab" href="#mainpage_view_source">{{ _('View source') }}</a></li>
@@ -30,15 +30,15 @@
       </div>
       <div class="tab-content">
         <div id="mainpage_read" class="tab-pane fade in active">
-        <br/>
-        {{ _('From Wikipedia, the free encyclopedia') }}        
-          {% block read %}{% endblock read %}
+          <br />
+          {{ _('From Wikipedia, the free encyclopedia') }}
+          {# {% block read %}{% endblock read %} #}
         </div>
         <div id="mainpage_view_source" class="tab-pane fade">
-          {% block view_source %}{% endblock view_source %}
+          {# {% block view_source %}{% endblock view_source %} #}
         </div>
         <div id="mainpage_view_history" class="tab-pane fade">
-          {% block view_history %}{% endblock view_history %}
+          {# {% block view_history %}{% endblock view_history %} #}
         </div>
       </div>
 
@@ -52,13 +52,13 @@
       </ul>
       <div class="tab-content">
         <div id="talk_read" class="tab-pane fade in active">
-          <h3>talk_read</h3>
+          {% block talk_read %}{% endblock talk_read %}
         </div>
         <div id="talk_view_source" class="tab-pane fade">
-          <h3>talk_view source</h3>
+          {% block talk_view_source %}{% endblock talk_view_source %}
         </div>
         <div id="talk_view_history" class="tab-pane fade">
-          <h3>talk_view history</h3>
+          {% block talk_view_history %}{% endblock talk_view_history %}
         </div>
       </div>
     </div>

@@ -1,89 +1,28 @@
-{% extends "base.html.j2" %}
-{% block head %}
-{{ super() }}
-<style>
-  .nav-tabs {
-    display: flex;
-    justify-content: flex-start;
-    position: relative;
-  }
+{% extends "base2.html.j2" %}
 
-  .nav-tabs ul {
-    position: absolute;
-    top: -42px;
-    left: 0;
-    background-color: white; 
-  }
-</style>
-{% endblock head %}
+{% block read %}
+<div style="background-color: brown;">
+{{ _('Welcome to') }} <a href="{{ url_for('index') }}">{{ _('Wikipedia') }}</a>,<br>
+{{ _('the free encyclopedia that anyone can edit.') }}<br>
+<a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in
+English') }}
+{% for post in posts %}
+{% include "_post.html.j2" %}
+{% endfor %}
 
-{% block app_content %}
-<br />
-
-<div class="container-fluid">
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#mainpage">Main Page</a></li>
-    <li><a data-toggle="tab" href="#talk">Talk</a></li>
-  </ul>
-
-  <div class="tab-content">
-    <!-- main page 子層 -->
-    <div id="mainpage" class="tab-pane fade in active">
-      <div>
-        {# 這裏强行用transform把子層向上移, 和父層重疊了, 但會把main page和talk button擋住了 #}
-        {# 被我拿掉了 style="transform: translate(0px, -42px);" #}
-        <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#mainpage_read">Read</a></li>
-          <li><a data-toggle="tab" href="#mainpage_view_source">View source</a></li>
-          <li><a data-toggle="tab" href="#mainpage_view_history">View history</a></li>
-        </ul>
-      </div>
-      <div class="tab-content">
-        <div id="mainpage_read" class="tab-pane fade in active">
-          <h4 style="text-align: center;">
-            {{ _('Welcome to') }} <a href="{{ url_for('index') }}">{{ _('Wikipedia') }}</a>,<br>
-            {{ _('the free encyclopedia that anyone can edit.') }}<br>
-            <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in
-            English') }}
-          </h4>
-
-          {% for post in posts %}
-          {% include "_post.html.j2" %}
-          {% endfor %}
-        </div>
-        <div id="mainpage_view_source" class="tab-pane fade">
-          <h3>mainpage_view source</h3>
-        </div>
-        <div id="mainpage_view_history" class="tab-pane fade">
-          <h3>mainpage_view history</h3>
-        </div>
-      </div>
-
-    </div>
-    <!-- Talk 子層 -->
-    <div id="talk" class="tab-pane fade">
-      <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#talk_read">Read</a></li>
-        <li><a data-toggle="tab" href="#talk_view_source">View source</a></li>
-        <li><a data-toggle="tab" href="#talk_view_history">View history</a></li>
-      </ul>
-      <div class="tab-content">
-        <div id="talk_read" class="tab-pane fade in active">
-          <h3>talk_read</h3>
-        </div>
-        <div id="talk_view_source" class="tab-pane fade">
-          <h3>talk_view source</h3>
-        </div>
-        <div id="talk_view_history" class="tab-pane fade">
-          <h3>talk_view history</h3>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
+{% endblock read %}
+
+{% block view_source %}{% endblock view_source %}
+
+{% block view_history %}{% endblock view_history %}
 
 
-{% endblock app_content %}
+
+
+
+
+
 
 {% block scripts %}
 {{ super() }}

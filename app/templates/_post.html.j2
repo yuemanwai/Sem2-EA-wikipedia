@@ -1,11 +1,9 @@
+{# 用左呢個_post.html.j2會令tablist失效 #}
 <table class="table table-hover">
     <tr>
         <td>
-            {% if post %}
             {{ post.article_content }}
-            {% else %}
-            <h3>&emsp;&emsp;<b>{{ _("The article that you're looking for doesn't exist.") }}</b></h3>
-            {% endif %}
+
         </td>
     </tr>
 </table>

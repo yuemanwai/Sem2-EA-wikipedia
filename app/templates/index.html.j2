@@ -6,9 +6,11 @@
     {{ _('the free encyclopedia that anyone can edit.') }}<br>
     <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in
     English') }}
+    {% if post %}
     {% for post in posts %}
-    {% include "_post.html.j2" %}
+    {{ post.article_content }}
     {% endfor %}
+    {% endif %}
 
 </div>
 {% endblock read %}

@@ -210,6 +210,8 @@
         {% if title != "Wikipedia, the free encyclopedia" %}
         <h2>{{ title }}</h2>
         <hr>
+        {% else %}
+        <br/>
         {% endif %}
         {% block app_content %} {% endblock app_content %}
       </div>

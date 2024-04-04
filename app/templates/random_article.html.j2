@@ -1,8 +1,8 @@
 {% extends "base2.html.j2" %}
 {% block read %}
-{% if post %}
+{% if title %}
 {% for post in posts %}
-{{ post.article_content }}
+{{ post.body }}
 {% endfor %}
 {% else %}
 <h3>&emsp;&emsp;<b>{{ _("The article that you're looking for doesn't exist.") }}</b></h3>

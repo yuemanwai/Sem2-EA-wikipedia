@@ -1,0 +1,21 @@
+{% extends "base.html.j2" %}
+{% block head %}
+{{ super() }}
+{% endblock head %}
+{% block app_content %}
+<div class="container-fluid">
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#homepage"> {{ _('Homepage') }}</a></li>
+    <li><a data-toggle="tab" href="#userpage">{{ _('User page') }}</a></li>
+    <li><a data-toggle="tab" href="#talk">{{ _('Talk') }}</a></li>
+  </ul>
+  <div class="tab-content">
+    <div id="homepage" class="tab-pane fade in active">
+    </div>
+    <div id="userpage" class="tab-pane fade">
+    </div>
+    <div id="talk" class="tab-pane fade">
+    </div>
+  </div>
+</div>
+{% endblock app_content %}

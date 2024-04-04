@@ -11,8 +11,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 watchlist = db.Table(
     'watchlist',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_post_id', db.Integer, db.ForeignKey('post.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),nullable=False),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'),nullable=False)
 )
 
 
@@ -23,13 +23,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    followed_post = db.relationship(
-        'User', secondary=watchlist,
-        primaryjoin=(watchlist.c.follower_id == id),
-        backref=db.backref('watchlist', lazy='dynamic'), lazy='dynamic')
-
+        
     def __repr__(self) -> str:
-        return f'<User {self.username}>'
+        return f'<Username : {self.username}>'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -44,20 +40,19 @@ class User(UserMixin, db.Model):
 
     def follow(self, post):
         if not self.is_following(post):
-            self.followed_post.append(post)
+            self.posts.append(post)
 
     def unfollow(self, post):
         if self.is_following(post):
-            self.followed_post.remove(post)
+            self.posts.remove(post)
 
     def is_following(self, post):
-        return self.followed_post.filter(watchlist.c.followed_post_id == post.id).count() > 0
+        return self.posts.filter(watchlist.c.post_id == post.id).count() > 0
 
     def followed_posts(self):
         followed = Post.query.join(
-            watchlist, watchlist.c.followed_post_id == Post.id
-        ).filter(watchlist.c.follower_id == self.id)
-        # own = Post.query.filter_by(user_id=self.id)
+            watchlist, watchlist.c.post_id == Post.id
+        ).filter(watchlist.c.user_id == self.id)
         return followed.order_by(Post.create_time.desc())
 
     def get_reset_password_token(self, expires_in=600):
@@ -82,14 +77,16 @@ def load_user(id):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_title = db.Column(db.String(140), index=True, unique=True)
-    article_content = db.Column(db.String(2000))
+    title = db.Column(db.String(140), index=True, unique=True)
+    body = db.Column(db.String(2000))
     create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    follower = db.relationship(
-    'Post', secondary=watchlist,
-    primaryjoin=(watchlist.c.followed_post_id == id),
-    backref=db.backref('watchlist', lazy='dynamic'), lazy='dynamic')
+    users = db.relationship('User', secondary=watchlist,
+                            backref=db.backref('posts', lazy='dynamic'),
+                            primaryjoin=(watchlist.c.post_id == id),
+                            secondaryjoin=(watchlist.c.user_id == User.id),
+                            lazy='dynamic')
+
 
     def __repr__(self) -> str:
-        return f'<Post {self.article_content}>'
+        return f'<Post title : {self.title}>'

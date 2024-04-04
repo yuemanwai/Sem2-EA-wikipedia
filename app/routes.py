@@ -99,9 +99,9 @@ def reset_password(token):
 @app.route('/homepage/<username>')
 @login_required
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    posts = user.followed_posts().all()
-    return render_template('index.html.j2', user=user, posts=posts)
+    # user = User.query.filter_by(username=username).first_or_404()
+    # posts = user.followed_posts().all()
+    return render_template('homepage.html.j2',  title=_(f'Hello, {username}!'))
 
 
 # @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -124,8 +124,8 @@ def user(username):
 @app.route('/follow/<title>', methods=['POST'])
 @login_required
 def follow(title):
-    article = Post.query.filter_by(article_title=title).first()
-    current_user.follow(article)
+    post = Post.query.filter_by(title=title).first()
+    current_user.follow(post)
     db.session.commit()
     following_article=True
     flash(_('<%(title)s> and its talk page have been added to your watchlist permanently.', title=title))
@@ -134,8 +134,8 @@ def follow(title):
 @app.route('/unfollow/<title>', methods=['POST'])
 @login_required
 def unfollow(title):
-    article = Post.query.filter_by(article_title=title).first()
-    current_user.unfollow(article)
+    post = Post.query.filter_by(title=title).first()
+    current_user.unfollow(post)
     db.session.commit()
     following_article=False
     flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
@@ -158,18 +158,19 @@ def get_random_article():
     count = Post.query.count()
     if count:
         random_id = randint(1, count)
-        random_article = Post.query.get(random_id)
-        if random_article:
-            article_title = random_article.article_title
-            return redirect(url_for('wiki', article_title=article_title.capitalize()))
+        random_post = Post.query.get(random_id)
+        if random_post:
+            title = random_post.title
+            return redirect(url_for('wiki', title=title.capitalize()))
     flash('Article not found')
     return redirect(url_for('index'))
 
-@app.route('/wiki/<article_title>')
-def wiki(article_title):
-    article =  Post.query.filter_by(article_title=article_title).first()
-    following_article = None
+@app.route('/wiki/<title>')
+def wiki(title):
+    post =  Post.query.filter_by(title=title).first()
     if current_user.is_authenticated:
-        following_article = current_user.is_following(article)
-    return render_template('random_article.html.j2', title=article_title, posts=[article], following_article=following_article)
+        following_post = current_user.is_following(post)
+    else:
+        following_post = False
+    return render_template('random_article.html.j2', title=title, posts=[post], following_post=following_post)
 

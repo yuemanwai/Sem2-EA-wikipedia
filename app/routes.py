@@ -8,7 +8,7 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Post
 from app.email import send_password_reset_email
-
+from random import randint
 
 @app.before_request
 def before_request():
@@ -22,7 +22,7 @@ def before_request():
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
     posts = Post.query.order_by(Post.create_time.desc()).all()
-    return render_template('index.html.j2', title=_('Wikipedia, the free encyclopedia'), posts=posts)
+    return render_template('index.html.j2', title=_('Main_Page'), posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -31,7 +31,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data.capitalize()).first()
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('login'))
@@ -55,12 +55,12 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data.capitalize(), email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash(_('Congratulations, you are now a registered user!'))
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
     return render_template('register.html.j2', title=_('Create account'), form=form)
 
 
@@ -99,62 +99,78 @@ def reset_password(token):
 @app.route('/homepage/<username>')
 @login_required
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    # page = request.args.get('page', 1, type=int)
-    posts = user.followed_posts().all()
-    return render_template('index.html.j2', user=user, posts=posts)
+    # user = User.query.filter_by(username=username).first_or_404()
+    # posts = user.followed_posts().all()
+    return render_template('homepage.html.j2',  title=_(f'Hello, {username}!'))
 
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+# @app.route('/edit_profile', methods=['GET', 'POST'])
+# @login_required
+# def edit_profile():
+#     form = EditProfileForm(current_user.username)
+#     if form.validate_on_submit():
+#         current_user.username = form.username.data.capitalize()
+#         current_user.about_me = form.about_me.data.capitalize()
+#         db.session.commit()
+#         flash(_('Your changes have been saved.'))
+#         return redirect(url_for('edit_profile'))
+#     elif request.method == 'GET':
+#         form.username.data = current_user.username
+#         form.about_me.data = current_user.about_me
+#     return render_template('edit_profile.html.j2', title=_('Edit Profile'),
+#                            form=form)
+
+
+@app.route('/follow/<title>', methods=['POST'])
 @login_required
-def edit_profile():
-    form = EditProfileForm(current_user.username)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.about_me = form.about_me.data
-        db.session.commit()
-        flash(_('Your changes have been saved.'))
-        return redirect(url_for('edit_profile'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html.j2', title=_('Edit Profile'),
-                           form=form)
-
-
-@app.route('/follow/<username>')
-@login_required
-def follow(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        flash(_('User %(username)s not found.', username=username))
-        return redirect(url_for('index'))
-    if user == current_user:
-        flash(_('You cannot follow yourself!'))
-        return redirect(url_for('user', username=username))
-    current_user.follow(user)
+def follow(title):
+    post = Post.query.filter_by(title=title).first()
+    current_user.follow(post)
     db.session.commit()
-    flash(_('You are following %(username)s!', username=username))
-    return redirect(url_for('user', username=username))
+    following_article=True
+    flash(_('<%(title)s> and its talk page have been added to your watchlist permanently.', title=title))
+    return redirect(url_for('wiki', title=title, following_article=following_article))
 
-
-@app.route('/unfollow/<username>')
+@app.route('/unfollow/<title>', methods=['POST'])
 @login_required
-def unfollow(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        flash(_('User %(username)s not found.', username=username))
-        return redirect(url_for('index'))
-    if user == current_user:
-        flash(_('You cannot unfollow yourself!'))
-        return redirect(url_for('user', username=username))
-    current_user.unfollow(user)
+def unfollow(title):
+    post = Post.query.filter_by(title=title).first()
+    current_user.unfollow(post)
     db.session.commit()
-    flash(_('You are not following %(username)s.', username=username))
-    return redirect(url_for('user', username=username))
+    following_article=False
+    flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
+    return redirect(url_for('wiki', title=title,following_article=following_article))
 
 @app.route('/search')
 def search():
     keyword = request.args.get('q')
     results = 'testing'
     return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)
+
+@app.route('/Watchlist')
+@login_required
+def watchlist():
+    return render_template('watchlist.html.j2', title=_('Watchlist'))
+
+
+@app.route('/random_article')
+def get_random_article():
+    count = Post.query.count()
+    if count:
+        random_id = randint(1, count)
+        random_post = Post.query.get(random_id)
+        if random_post:
+            title = random_post.title
+            return redirect(url_for('wiki', title=title.capitalize()))
+    flash('Article not found')
+    return redirect(url_for('index'))
+
+@app.route('/wiki/<title>')
+def wiki(title):
+    post =  Post.query.filter_by(title=title).first()
+    if current_user.is_authenticated:
+        following_post = current_user.is_following(post)
+    else:
+        following_post = False
+    return render_template('random_article.html.j2', title=title, posts=[post], following_post=following_post)
+

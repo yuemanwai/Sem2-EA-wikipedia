@@ -10,6 +10,7 @@ backcall==0.2.0
 beautifulsoup4==4.11.1
 bleach==5.0.1
 blinker==1.5
+bs4==0.0.2
 certifi==2022.12.7
 cffi==1.15.1
 charset-normalizer==2.1.1
@@ -71,6 +72,7 @@ jupyterlab-git==0.40.1
 jupyterlab-pygments==0.2.2
 jupyterlab_server==2.16.5
 kiwisolver==1.4.4
+lxml==5.2.0
 Mako==1.2.4
 MarkupSafe==2.1.1
 matplotlib==3.6.2

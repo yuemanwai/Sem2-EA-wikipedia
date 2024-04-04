@@ -1,13 +1,8 @@
-{% extends "base.html.j2" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% extends "base2.html.j2" %}
 {% block app_content %}
 {# 可以用Whoosh / Elasticsearch 做search engine #}
-<h2>{{ title }}</h2>
-<br />
-<p>
 <form class="d-flex-inliine" action="{{ url_for('search') }}" role="search" style="display: inline-flex;width: 800px;">
     <input class="form-control me-2 " type="search" placeholder="{{ keyword }}" aria-label="Search" name="q">
     <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
 </form>
-
 {% endblock %}

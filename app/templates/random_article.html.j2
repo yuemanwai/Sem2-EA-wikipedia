@@ -1,0 +1,16 @@
+{% extends "base2.html.j2" %}
+{% block read %}
+{% if title %}
+{% for post in posts %}
+{{ post.body }}
+{% endfor %}
+{% else %}
+<h3>&emsp;&emsp;<b>{{ _("The article that you're looking for doesn't exist.") }}</b></h3>
+{% endif %}
+{% endblock read %}
+
+{% block view_source %}view_source{% endblock view_source %}
+{% block view_history %}view_history{% endblock view_history %}
+{% block talk_read %}talk_read{% endblock talk_read %}
+{% block talk_view_source %}talk_view_source{% endblock talk_view_source %}
+{% block talk_view_history %}talk_view_history{% endblock talk_view_history %}

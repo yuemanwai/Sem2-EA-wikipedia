@@ -1,6 +1,7 @@
 
 from datetime import datetime, timedelta, timezone
 from hashlib import md5
+import uuid
 from app import app, db, login
 import jwt
 
@@ -68,7 +69,12 @@ class User(UserMixin, db.Model):
         except:           
             return None
         return User.query.get(id)
-
+    
+    # def generate_uuid_from_user_id(user_id):
+    #     namespace = uuid.UUID('00000000-0000-0000-0000-000000000000')  # 自定義命名空間，可以使用您自己的命名空間 UUID
+    #     user_id_str = str(user_id)
+    #     generated_uuid = uuid.uuid5(namespace, user_id_str)
+    #     return generated_uuid
 
 @login.user_loader
 def load_user(id):

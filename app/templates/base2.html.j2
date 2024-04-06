@@ -8,11 +8,9 @@
 
 <div class="container-fluid">
   <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#mainpage">{% if title == "Wikipedia, the free encyclopedia" %}
-        {{ _('Main Page') }}
-        {% else %}
-        {{ _('未知叫咩住') }}
-        {% endif %}</a></li>
+    <li class="active"><a data-toggle="tab" href="#mainpage">
+        {{ "未知叫咩住" }}
+      </a></li>
     <li><a data-toggle="tab" href="#talk">{{ _('Talk') }}</a></li>
   </ul>
 
@@ -21,7 +19,7 @@
     <div id="mainpage" class="tab-pane fade in active">
       <div>
         {# 這裏强行用transform把子層向上移, 和父層重疊了, 暫時未出意外 #}
-        {# 被我拿掉了 style="float: right;transform: translate(0px, -41px);" #}
+        {# style="float: right;transform: translate(0px, -41px);" #}
         <ul class="nav nav-tabs" style="float: right;transform: translate(0px, -41px);">
           <li class="active"><a data-toggle="tab" href="#mainpage_read">{{ _('Read') }}</a></li>
           <li><a data-toggle="tab" href="#mainpage_view_source">{{ _('View source') }}</a></li>
@@ -29,13 +27,15 @@
           {# 呢個星星, 係follow功能, 要再test下先 #}
           {% if not current_user.is_anonymous %}
           {% if following_post %}
-          <form action="{{ url_for('unfollow', title=title) }}" method="post" style="display: inline;transform: translate(0px, 15px);">
+          <form action="{{ url_for('unfollow', title=title) }}" method="post"
+            style="display: inline;transform: translate(0px, 15px);">
             <button type="submit" class="btn btn-outline-light">
               <i class="fa-solid fa-star" style="font-size: 14px;"></i>
             </button>
           </form>
           {% else %}
-          <form action="{{ url_for('follow',title=title) }}" method="post" style="display: inline;transform: translate(0px, 15px);">
+          <form action="{{ url_for('follow',title=title) }}" method="post"
+            style="display: inline;transform: translate(0px, 15px);">
             <button type="submit" class="btn btn-outline-light">
               <i class="fa-regular fa-star" style="font-size: 14px; "></i>
             </button>
@@ -62,7 +62,7 @@
     <!-- Talk 子層 -->
     <div id="talk" class="tab-pane fade">
       {# 這裏强行用transform把子層向上移, 和父層重疊了, 暫時未出意外 #}
-      {# 被我拿掉了 style="float: right;transform: translate(0px, -41px);" #}
+      {# style="float: right;transform: translate(0px, -41px);" #}
       <ul class="nav nav-tabs" style="float: right;transform: translate(0px, -41px);">
         <li class="active"><a data-toggle="tab" href="#talk_read">Read</a></li>
         <li><a data-toggle="tab" href="#talk_view_source">View source</a></li>

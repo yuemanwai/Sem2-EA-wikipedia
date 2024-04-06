@@ -1,10 +1,9 @@
-
 from datetime import datetime, timedelta, timezone
 from hashlib import md5
 import uuid
 from app import app, db, login
 import jwt
-
+from flask import make_response
 from flask_login import UserMixin
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,9 +21,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-        
+
     def __repr__(self) -> str:
         return f'<Username : {self.username}>'
 
@@ -70,12 +68,27 @@ class User(UserMixin, db.Model):
             return None
         return User.query.get(id)
     
-    # def generate_uuid_from_user_id(user_id):
+    # @staticmethod
+    # def sign_session_id(session_id):
+    #     # 使用密鑰對會話 ID 進行簽名，生成 JWT
+    #     signed_session_id = jwt.encode({'session_id': session_id}, app.config["SECRET_KEY"], algorithm='HS256')
+    #     return signed_session_id
+
+    # @staticmethod
+    # def verify_session_id(signed_session_id):
+    #     try:
+    #         # 驗證 JWT 的簽名並解碼
+    #         decoded_token = jwt.decode(signed_session_id, app.config["SECRET_KEY"], algorithms=['HS256'])
+    #     except:           
+    #         return None
+    #     return decoded_token['session_id']  # 返回會話 ID
+
+    # def generate_uuid_for_session_id(self):
     #     namespace = uuid.UUID('00000000-0000-0000-0000-000000000000')  # 自定義命名空間，可以使用您自己的命名空間 UUID
-    #     user_id_str = str(user_id)
+    #     user_id_str = str(self.id)
     #     generated_uuid = uuid.uuid5(namespace, user_id_str)
     #     return generated_uuid
-
+    
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -96,3 +109,9 @@ class Post(db.Model):
 
     def __repr__(self) -> str:
         return f'<Post title : {self.title}>'
+    
+# class UserSession(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+#     session_id = db.Column(db.PickleType)
+

@@ -50,10 +50,10 @@
 {% endblock head %}
 
 {% block title %}
-{% if title == "Main_Page" %}
-{{_('Wikipedia, the free encyclopedia') }}
-{% else %}
+{% if title  %}
 {{ title }}{{ _(' - Wikipedia') }}
+{% else %}
+{{_('Wikipedia, the free encyclopedia') }}
 {% endif %}
 {% endblock title %}
 

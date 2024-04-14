@@ -33,7 +33,7 @@
            {% endif %}
           <li><a data-toggle="tab" href="#mainpage_view_history">{{ _('View history') }}</a></li>
           {# 呢個星星, 係follow功能, 要再test下先 #}
-          {% if not current_user.is_anonymous %}
+          {% if not current_user.is_anonymous and category=='Article'%}
           {% if following_post %}
           <form action="{{ url_for('unfollow', title=title) }}" method="post"
             style="display: inline;transform: translate(0px, 15px);">

@@ -16,5 +16,6 @@ class Config(object):
     ADMINS = ['wai@example.com']
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'es', 'zh']
+    # 要有domain,然後去google申請條key, https://www.google.com/recaptcha/admin
     RECAPTCHA_PUBLIC_KEY='no-key'
     RECAPTCHA_PRIVATE_KEY='no-key'

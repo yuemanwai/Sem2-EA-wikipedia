@@ -12,6 +12,7 @@ from flask_moment import Moment
 from flask_babel import Babel
 from flask_session import Session
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
@@ -26,6 +27,7 @@ mail = Mail(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 babel = Babel(app)
+
 
 if not app.debug:
     root = logging.getLogger()
@@ -55,9 +57,10 @@ if not app.debug:
     root.setLevel(logging.INFO)
     root.info('Microblog startup')
 
+
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 # You must keep the routes at the end.
-from app import routes, errors
+from app import routes, errors, search

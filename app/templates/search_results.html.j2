@@ -1,0 +1,25 @@
+{% extends "base2.html.j2" %}
+{% block app_content %}
+{# Whoosh / Elasticsearch 可以做search engine??? #}
+<form class="d-flex-inliine" action="{{ url_for('search_route') }}" role="search"
+    style="display: inline-flex;width: 800px;">
+    <input class="form-control me-2 " type="search" placeholder="{{ keyword }}" aria-label="Search" name="q">
+    <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
+</form>
+
+{% if results %}
+<ul>
+    {% for result in results %}
+    <li>
+        <h3>{{ result['title'] }}</h3>
+        <p>{{ result['content'] }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No results found.</p>
+{% endif %}
+
+
+
+{% endblock %}

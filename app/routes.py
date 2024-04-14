@@ -141,12 +141,6 @@ def unfollow(title):
     flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
     return redirect(url_for('wiki', title=title,following_article=following_article))
 
-@app.route('/search')
-def search():
-    keyword = request.args.get('q')
-    results = 'testing'
-    return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)
-
 @app.route('/Watchlist')
 @login_required
 def watchlist():

@@ -105,8 +105,10 @@ def user(username):
 
 
 @app.route('/edit', methods=['GET', 'POST'])
-def edit():
-    title="A" #傳入唔到title
+def edit(): #唔可以係呢個位用title, 會出現TypeError
+    title = request.args.get('title') 
+    if title is None:
+        print("No title provided")
     post = Post.query.filter_by(title=title).first()
     form = EditForm(edit_post=post.body)
     if form.validate_on_submit():

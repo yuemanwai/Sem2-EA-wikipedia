@@ -22,6 +22,8 @@ def before_request():
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
     posts = Post.query.order_by(Post.create_time.desc()).all()
+    if posts is None:
+        posts=[]
     return render_template('index.html.j2', category=_('Main Page'), posts=posts)
 
 
@@ -167,7 +169,7 @@ def wiki(title):
         if current_user.is_authenticated:
             following_post = current_user.is_following(post)
             return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
-    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[None], following_post=False)
+    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[], following_post=False)
 
 
 @app.route('/search')

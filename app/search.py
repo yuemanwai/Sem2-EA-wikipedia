@@ -36,7 +36,7 @@ def search(query):
 
 
 @app.route('/search')
-def search_route():
+def search():
     keyword = request.args.get('q', '')
     results = search(keyword)
-    return render_template('search_results.html.j2', title=_('Search results'),results=results, keyword=keyword)
+    return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)

@@ -9,7 +9,11 @@
 <div class="container-fluid">
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#mainpage">
-        {{ "未知叫咩住" }}
+        {% if category %}
+        {{ category }}
+        {% else %}
+        {{ title }}
+        {% endif %}
       </a></li>
     <li><a data-toggle="tab" href="#talk">{{ _('Talk') }}</a></li>
   </ul>

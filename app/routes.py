@@ -22,7 +22,7 @@ def before_request():
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
     posts = Post.query.order_by(Post.create_time.desc()).all()
-    return render_template('index.html.j2', title=_('Main Page'), posts=posts)
+    return render_template('index.html.j2', category=_('Main Page'), posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -104,21 +104,20 @@ def user(username):
     return render_template('homepage.html.j2',  title=_(f'Hello, {username}!'))
 
 
-# @app.route('/edit_profile', methods=['GET', 'POST'])
+# @app.route('/edit', methods=['GET', 'POST'])
 # @login_required
-# def edit_profile():
+# def edit():
 #     form = EditProfileForm(current_user.username)
 #     if form.validate_on_submit():
 #         current_user.username = form.username.data
 #         current_user.about_me = form.about_me.data
 #         db.session.commit()
 #         flash(_('Your changes have been saved.'))
-#         return redirect(url_for('edit_profile'))
+#         return redirect(url_for('edit'))
 #     elif request.method == 'GET':
 #         form.username.data = current_user.username
 #         form.about_me.data = current_user.about_me
-#     return render_template('edit_profile.html.j2', title=_('Edit Profile'),
-#                            form=form)
+#     return render_template('edit.html.j2', title=_('Edit'),form=form)
 
 
 @app.route('/follow/<title>', methods=['POST'])
@@ -166,5 +165,5 @@ def wiki(title):
         following_post = current_user.is_following(post)
     else:
         following_post = False
-    return render_template('random_article.html.j2', title=title, posts=[post], following_post=following_post)
+    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
 

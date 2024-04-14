@@ -3,7 +3,8 @@
 {% block read %}
 <div>
     {{ _('Welcome to') }} <a href="{{ url_for('index') }}">{{ _('Wikipedia') }}</a>,<br>
-    {{ _('the free encyclopedia that anyone can edit.') }}<br>
+    {{ _('the free encyclopedia that') }} <a href="{{ url_for('edit') }}">{{ _('anyone can edit.') }}</a>
+    <br>
     <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in
     English') }}
     {% if post %}
@@ -14,11 +15,11 @@
 </div>
 {% endblock read %}
 
-{% block view_source %}view_source{% endblock view_source %}
+{# {% block view_source %}view_source{% endblock view_source %}
 {% block view_history %}view_history{% endblock view_history %}
 {% block talk_read %}talk_read{% endblock talk_read %}
 {% block talk_view_source %}talk_view_source{% endblock talk_view_source %}
-{% block talk_view_history %}talk_view_history{% endblock talk_view_history %}
+{% block talk_view_history %}talk_view_history{% endblock talk_view_history %} #}
 
 
 {% block scripts %}

@@ -26,7 +26,11 @@
         {# style="float: right;transform: translate(0px, -41px);" #}
         <ul class="nav nav-tabs" style="float: right;transform: translate(0px, -41px);">
           <li class="active"><a data-toggle="tab" href="#mainpage_read">{{ _('Read') }}</a></li>
+          {% if category == 'Article'%} 
+          <li><a href="{{ url_for('edit',title=title) }}">{{ _('Edit') }}</a></li>
+          {% else %}
           <li><a data-toggle="tab" href="#mainpage_view_source">{{ _('View source') }}</a></li>
+           {% endif %}
           <li><a data-toggle="tab" href="#mainpage_view_history">{{ _('View history') }}</a></li>
           {# 呢個星星, 係follow功能, 要再test下先 #}
           {% if not current_user.is_anonymous %}
@@ -56,7 +60,8 @@
           {% block read %}{% endblock read %}
         </div>
         <div id="mainpage_view_source" class="tab-pane fade">
-          {% block view_source %}{% endblock view_source %}
+          {# {% block view_source %}{% endblock view_source %} #}
+          {# {% include "edit.html.j2" %} #}
         </div>
         <div id="mainpage_view_history" class="tab-pane fade">
           {% block view_history %}{% endblock view_history %}
@@ -74,13 +79,10 @@
       </ul>
       <div class="tab-content">
         <div id="talk_read" class="tab-pane fade in active">
-          {% block talk_read %}{% endblock talk_read %}
         </div>
         <div id="talk_view_source" class="tab-pane fade">
-          {% block talk_view_source %}{% endblock talk_view_source %}
         </div>
         <div id="talk_view_history" class="tab-pane fade">
-          {% block talk_view_history %}{% endblock talk_view_history %}
         </div>
       </div>
     </div>

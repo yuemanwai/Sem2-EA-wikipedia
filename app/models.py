@@ -83,7 +83,8 @@ class User(UserMixin, db.Model):
     #         return None
     #     return decoded_token['session_id']  # 返回會話 ID
 
-    # def generate_uuid_for_session_id(self):
+    
+    # def generate_uuid_for_session_id(self): # 用uuid造session_id
     #     namespace = uuid.UUID('00000000-0000-0000-0000-000000000000')  # 自定義命名空間，可以使用您自己的命名空間 UUID
     #     user_id_str = str(self.id)
     #     generated_uuid = uuid.uuid5(namespace, user_id_str)
@@ -109,8 +110,9 @@ class Post(db.Model):
 
     def __repr__(self) -> str:
         return f'<Post title : {self.title}>'
-    
-# class UserSession(db.Model):
+
+
+# class UserSession(db.Model): # 如果要係db放session_id...
 #     id = db.Column(db.Integer, primary_key=True)
 #     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 #     session_id = db.Column(db.PickleType)

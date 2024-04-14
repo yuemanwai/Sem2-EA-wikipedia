@@ -1,14 +1,14 @@
 import os
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
-from whoosh.qparser import MultifieldParser,QueryParser
+from whoosh.qparser import MultifieldParser, QueryParser
 from flask import render_template, request
 from flask_babel import _
 from app.models import Post
 from . import app
 
 index_dir = os.path.join(os.getcwd(), 'index_dir')
-schema = Schema(id=ID(stored=True), title=TEXT(stored=True), content=TEXT(stored=True))
+schema = Schema(id=ID(stored=True), title=TEXT(stored=True), content=TEXT)
 
 # 創建Whoosh索引
 def create_index():
@@ -29,7 +29,7 @@ def search(query):
     with ix.searcher() as searcher:
         parser = MultifieldParser(['title', 'content'], schema=schema)
         parsed_query = parser.parse(query)
-        # 直接用"A"來搜尋, 都係return none
+        # 直接用"A"來搜尋都唔得, 整極都係return none (>口<)
         # parsed_query = QueryParser("title", ix.schema).parse("A")
         results = searcher.search(parsed_query)
         return results

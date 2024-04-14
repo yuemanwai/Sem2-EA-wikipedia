@@ -1,40 +1,25 @@
 {% extends "base2.html.j2" %}
-
+{% block styles %}
+    {{ super() }}
+    <style>
+        .custom-container {
+            border: 2px solid rgb(194, 189, 189);
+            background-color: rgb(233, 233, 233);
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+{% endblock styles %}
 {% block read %}
-<div>
-    {{ _('Welcome to') }} <a href="{{ url_for('index') }}">{{ _('Wikipedia') }}</a>,<br>
-    {{ _('the free encyclopedia that') }} <a href="{{ url_for('edit') }}">{{ _('anyone can edit.') }}</a>
-    <br>
-    <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in
-    English') }}
-    {% if post %}
-    {% for post in posts %}
-    {{ post.body }}
-    {% endfor %}
-    {% endif %}
-</div>
+    <div class="custom-container">
+        <h3>{{ _('Welcome to') }} <a href="{{ url_for('wiki',title='Wikipedia') }}">{{ _('Wikipedia') }}</a>,</h3>
+        {{ _('the free encyclopedia that') }} <a href="{{ url_for('edit') }}">{{ _('anyone can edit.') }}</a>
+        <br/>
+        <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in English') }} <br/>
+    </div>
+        {% if post %}
+            {% for post in posts %}
+                {{ post.body }}
+            {% endfor %}
+        {% endif %}
 {% endblock read %}
-
-{# {% block view_source %}view_source{% endblock view_source %}
-{% block view_history %}view_history{% endblock view_history %}
-{% block talk_read %}talk_read{% endblock talk_read %}
-{% block talk_view_source %}talk_view_source{% endblock talk_view_source %}
-{% block talk_view_history %}talk_view_history{% endblock talk_view_history %} #}
-
-
-{% block scripts %}
-{{ super() }}
-
-<!-- Fontawesome -->
-<script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
-
-<!-- JQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
-<!-- Compiled JavaScript -->
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
-<!-- Compiled and minified CSS -->
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-
-{% endblock scripts %}

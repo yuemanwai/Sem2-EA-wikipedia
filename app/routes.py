@@ -159,13 +159,25 @@ def get_random_article():
     flash('Article not found')
     return redirect(url_for('index'))
 
+
 @app.route('/wiki/<title>')
 def wiki(title):
     post =  Post.query.filter_by(title=title).first()
-    if current_user.is_authenticated:
-        following_post = current_user.is_following(post)
-    else:
-        following_post = False
+    if post:
+        if current_user.is_authenticated:
+            following_post = current_user.is_following(post)
+            return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
+    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[None], following_post=False)
 
-    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
 
+@app.route('/search')
+def search():
+    keyword = request.args.get('keyword', '')
+    if keyword is None:
+        return redirect(url_for('index'))
+    page_num = request.args.get('page', 1, type=int)
+    posts = Post.query.filter(Post.title.like(f'%{keyword}%')).paginate(
+        page=page_num, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+    next_url = url_for('search', keyword=keyword, page=page_num + 1) if posts.has_next else None
+    prev_url = url_for('search', keyword=keyword, page=page_num - 1) if posts.has_prev else None
+    return render_template('search.html.j2', title=_('Search results'), posts=posts.items, keyword=keyword, next_url=next_url, prev_url=prev_url)

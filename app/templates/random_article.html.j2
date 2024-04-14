@@ -1,5 +1,7 @@
 {% extends "base2.html.j2" %}
 {% block read %}
+{{ _('From Wikipedia, the free encyclopedia') }}
+<br /><br />
 {% if title %}
 {% for post in posts %}
 {{ post.body }}

@@ -8,7 +8,7 @@ from app.models import Post
 from . import app
 
 index_dir = os.path.join(os.getcwd(), 'index_dir')
-schema = Schema(id=ID(stored=True), title=TEXT(stored=True), content=TEXT)
+schema = Schema(id=ID(stored=True), title=TEXT(stored=True), content=TEXT(stored=True))
 
 # 創建Whoosh索引
 def create_index():
@@ -24,19 +24,25 @@ def create_index():
 
 
 # 執行全文搜索
-def search(query):
+def searchf(query):
     ix = open_dir(index_dir)
     with ix.searcher() as searcher:
-        parser = MultifieldParser(['title', 'content'], schema=schema)
-        parsed_query = parser.parse(query)
+        # 方法1 失敗
+        # parser = MultifieldParser(['title', 'content'], schema=schema)
+        # parsed_query = parser.parse(query)
+
+        # 方法2 失敗
         # 直接用"A"來搜尋都唔得, 整極都係return none (>口<)
         # parsed_query = QueryParser("title", ix.schema).parse("A")
-        results = searcher.search(parsed_query)
+
+        # 方法3 失敗
+        results = searcher.find("title",'A')
+        # print(f'search result = {results[0]}') 
         return results
 
 
 @app.route('/search')
 def search():
-    keyword = request.args.get('q', '')
-    results = search(keyword)
+    keyword = request.args.get('keyword', '')
+    results = searchf(keyword)
     return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)

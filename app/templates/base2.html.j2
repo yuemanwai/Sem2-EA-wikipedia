@@ -55,13 +55,9 @@
       <div class="tab-content">
         <div id="mainpage_read" class="tab-pane fade in active">
           <br />
-          {{ _('From Wikipedia, the free encyclopedia') }}
-          <br />
           {% block read %}{% endblock read %}
         </div>
         <div id="mainpage_view_source" class="tab-pane fade">
-          {# {% block view_source %}{% endblock view_source %} #}
-          {# {% include "edit.html.j2" %} #}
         </div>
         <div id="mainpage_view_history" class="tab-pane fade">
           {% block view_history %}{% endblock view_history %}

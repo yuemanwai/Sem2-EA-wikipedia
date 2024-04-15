@@ -98,11 +98,30 @@ def reset_password(token):
     return render_template('reset_password.html.j2', form=form)
 
 
-@app.route('/homepage/<username>')
+@app.route('/homepage', methods=['GET', 'POST'])
 @login_required
-def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template('homepage.html.j2',  title=_(f'Hello, {username.capitalize()}!'),user=user)
+def user():
+    user = User.query.filter_by(username=current_user.username).first_or_404()
+    post = Post.query.filter_by(title=current_user.username).first()
+    form = PostForm()
+    if form.validate_on_submit():
+        if form.title.data !=current_user.username:
+            flash('Cannot change user page title.')
+            return redirect(url_for('user', username=current_user.username))
+        if post:
+            post.body = form.body.data
+        else:
+            post = Post(title=current_user.username, body=form.body.data)
+            db.session.add(post)
+        db.session.commit()
+        flash(_('Your user page has been saved.'))
+        return redirect(url_for('user', username=current_user.username))
+    elif request.method == 'GET':
+        if post:
+            form.title.data = post.title
+            form.body.data = post.body
+    return render_template('homepage.html.j2',  title=_(f'Hello, {current_user.username.capitalize()}!'), form=form, user=user)
+    
 
 
 @app.route('/edit', methods=['GET', 'POST'])

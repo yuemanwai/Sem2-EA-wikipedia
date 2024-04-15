@@ -56,8 +56,9 @@ class EditForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    post = TextAreaField(_l('Say something'), validators=[DataRequired()])
-    submit = SubmitField(_l('Submit'))
+    title = StringField(_l('Title'), validators=[DataRequired()])
+    body = TextAreaField(_l('Body'), validators=[DataRequired()])
+    submit = SubmitField(_l('Publish page'))
 
 
 class DonationForm(FlaskForm):

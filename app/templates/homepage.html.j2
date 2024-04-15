@@ -1,6 +1,14 @@
 {% extends "base.html.j2" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 {% block head %}
 {{ super() }}
+<style>
+  .custom-container {
+    border: 2px solid rgb(194, 189, 189);
+    padding: 10px;
+    text-align: center;
+  }
+</style>
 {% endblock head %}
 {% block app_content %}
 <div class="container-fluid">
@@ -11,8 +19,20 @@
   </ul>
   <div class="tab-content">
     <div id="homepage" class="tab-pane fade in active">
+      <br />
+      <i class="fa-solid fa-envelope" style="font-size: 20px; "></i>
+      {{_('Email: ')}} <b>{{user.email}}</b> (<a href="#">{{_('confirm')}}</a>)
     </div>
     <div id="userpage" class="tab-pane fade">
+        <br />
+      <div class="custom-container">
+        {{_('<b>Wikipedia does not have a user page with this exact title.</b> In general, this page should be created
+        and edited by
+        User:')}} <b>{{user.username}}</b>{{_('.<br />
+        To start a page called User:')}} <b>{{user.username}}</b>{{_(', type in the box below. When you are done, preview the page to check for
+        errors and then publish it.')}}
+      </div><br /><br />
+        <div class="col-md-6">{{ wtf.quick_form(form) }}</div>
     </div>
     <div id="talk" class="tab-pane fade">
     </div>

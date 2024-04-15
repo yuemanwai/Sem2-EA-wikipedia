@@ -14,7 +14,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['wai@example.com']
-    POSTS_PER_PAGE = 3
+    POSTS_PER_PAGE = 10
     LANGUAGES = ['en', 'es', 'zh']
     # 要有domain,然後去google申請條key, https://www.google.com/recaptcha/admin
     RECAPTCHA_PUBLIC_KEY='no-key'

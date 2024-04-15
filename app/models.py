@@ -16,12 +16,36 @@ watchlist = db.Table(
 )
 
 
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(140), index=True, unique=True)
+    body = db.Column(db.String(2000))
+    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.String(2000), db.ForeignKey('user.id'),index=True)
+    edit_count = db.Column(db.Integer, default=0)
+    protected = db.Column(db.Boolean, default=False)
+
+    def __repr__(self) -> str:
+        return f'<Post title : {self.title}>'
+    
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    email = db.Column(db.String(100), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    created_on = db.Column(db.DateTime, default=datetime.utcnow)
+    login_count = db.Column(db.Integer, default=0)
+    fail_login_count = db.Column(db.Integer, default=0)
+    is_admin = db.Column(db.Boolean, default=False)
+        
+    posts = db.relationship('Post', secondary=watchlist,
+                            backref=db.backref('users', lazy='dynamic'),
+                            primaryjoin=(watchlist.c.post_id == Post.id),
+                            secondaryjoin=(watchlist.c.user_id == id),
+                            lazy='dynamic')
 
     def __repr__(self) -> str:
         return f'<Username : {self.username}>'
@@ -95,21 +119,23 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class Post(db.Model):
+class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(140), index=True, unique=True)
-    body = db.Column(db.String(2000))
-    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    users = db.relationship('User', secondary=watchlist,
-                            backref=db.backref('posts', lazy='dynamic'),
-                            primaryjoin=(watchlist.c.post_id == id),
-                            secondaryjoin=(watchlist.c.user_id == User.id),
-                            lazy='dynamic')
+    donor_id = db.Column(db.Integer, db.ForeignKey('donor.id'), nullable=False)
+    donate_on = db.Column(db.DateTime, nullable=False)
+    pay_method = db.Column(db.String(50), nullable=False)
+    pay_acc = db.Column(db.String(100), nullable=False)
+    amount_hkd = db.Column(db.Float, nullable=False)
 
+class Donor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(50), nullable=False)
+    lastname = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    monthly = db.Column(db.Boolean, nullable=False)
 
-    def __repr__(self) -> str:
-        return f'<Post title : {self.title}>'
+    payments = db.relationship('Payment', backref='donor', lazy=True)
+
 
 
 # class UserSession(db.Model): # 如果要係db放session_id...

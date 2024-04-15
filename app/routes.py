@@ -208,11 +208,11 @@ def donate():
             return redirect(url_for('payment', pay_method='GPay', amount=count_total))
     return render_template('donate.html.j2',form=form)
 
-@app.route('/payment/<pay_method>=<amount>',methods=['GET', 'POST'])
+@app.route('/payment/<pay_method>/<amount>',methods=['GET', 'POST'])
 def payment(pay_method,amount):
     form = PaymentForm(submit=pay_method)
     if form.validate_on_submit():
-        flash('Thank you very much.')
+        pass
     elif request.method == 'GET':
         form.submit.label.text = f'Donate with {pay_method}'
     return render_template('donate_payment.html.j2',form=form,amount=amount)

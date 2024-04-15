@@ -132,7 +132,7 @@
           </a>
         </li>
         <li>
-          <a href="{{ url_for('watchlist') }}">
+          <a href="{{ url_for('watchlist', username=current_user.username) }}">
             <i class="fa-regular fa-star" style="font-size: 20px; "></i>
           </a>
         </li>

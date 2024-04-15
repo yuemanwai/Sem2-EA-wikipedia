@@ -16,19 +16,6 @@ watchlist = db.Table(
 )
 
 
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(140), index=True, unique=True)
-    body = db.Column(db.String(2000))
-    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.String(2000), db.ForeignKey('user.id'),index=True)
-    edit_count = db.Column(db.Integer, default=0)
-    protected = db.Column(db.Boolean, default=False)
-
-    def __repr__(self) -> str:
-        return f'<Post title : {self.title}>'
-    
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,11 +28,6 @@ class User(UserMixin, db.Model):
     fail_login_count = db.Column(db.Integer, default=0)
     is_admin = db.Column(db.Boolean, default=False)
         
-    posts = db.relationship('Post', secondary=watchlist,
-                            backref=db.backref('users', lazy='dynamic'),
-                            primaryjoin=(watchlist.c.post_id == Post.id),
-                            secondaryjoin=(watchlist.c.user_id == id),
-                            lazy='dynamic')
 
     def __repr__(self) -> str:
         return f'<Username : {self.username}>'
@@ -118,6 +100,24 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(140), index=True, unique=True)
+    body = db.Column(db.String(2000))
+    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    edit_count = db.Column(db.Integer, default=0)
+    protected = db.Column(db.Boolean, default=False)
+
+    users = db.relationship('User', secondary=watchlist,
+                        backref=db.backref('posts', lazy='dynamic'),
+                        primaryjoin=(watchlist.c.post_id == id),
+                        secondaryjoin=(watchlist.c.user_id == User.id),
+                        lazy='dynamic')
+
+    def __repr__(self) -> str:
+        return f'<Post title : {self.title}>'
+    
 
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

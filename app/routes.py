@@ -101,9 +101,8 @@ def reset_password(token):
 @app.route('/homepage/<username>')
 @login_required
 def user(username):
-    # user = User.query.filter_by(username=username).first_or_404()
-    # posts = user.followed_posts().all()
-    return render_template('homepage.html.j2',  title=_(f'Hello, {username}!'))
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('homepage.html.j2',  title=_(f'Hello, {username.capitalize()}!'),user=user)
 
 
 @app.route('/edit', methods=['GET', 'POST'])
@@ -146,11 +145,13 @@ def unfollow(title):
     flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
     return redirect(url_for('wiki', title=title,following_article=following_article))
 
-@app.route('/Watchlist')
+@app.route('/Watchlist/<username>')
 @login_required
-def watchlist():
-    return render_template('watchlist.html.j2', title=_('Watchlist'))
-
+def watchlist(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = user.followed_posts().all()
+    count = user.followed_posts().count()
+    return render_template('watchlist.html.j2', title=_('Watchlist'),posts=posts,count=count)
 
 @app.route('/random_article')
 def get_random_article():

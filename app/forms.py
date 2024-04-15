@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm,RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField
+    TextAreaField, SelectField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
-    Length
+    Length, InputRequired
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 from app.config import Config
@@ -50,21 +50,26 @@ class ResetPasswordForm(FlaskForm):
 
 
 class EditForm(FlaskForm):
-    edit_post = TextAreaField(_l(''),
-                             validators=[Length(min=0, max=2000)])
+    edit_post = TextAreaField(_l(''),validators=[Length(min=0, max=2000)])
     submit = SubmitField(_l('Publish change'))
-
-    # def __init__(self, current_post, *args, **kwargs):
-    #     super(EditForm, self).__init__(*args, **kwargs)
-    #     self.current_post = current_post
-
-    # def validate_username(self, username):
-    #     if username.data != self.original_username:
-    #         user = User.query.filter_by(username=self.username.data).first()
-    #         if user is not None:
-    #             raise ValidationError(_('Please use a different username.'))
+    cancel = SubmitField(_l('Cancel'))
 
 
 class PostForm(FlaskForm):
     post = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
+
+
+class DonationForm(FlaskForm):
+    once_or_monthly = RadioField('', choices=[('once', 'Just Once'), ('monthly', 'Give Monthly')], validators=[InputRequired()])
+    amount = RadioField('', choices=[('20', '$20'), ('50', '$50'), ('100', '$100'), ('200', '$200')], validators=[InputRequired()])
+    transaction_fee = BooleanField(_l("I'll generously add 4% to cover the transaction fees so you can keep 100% of my donation."))
+    card = SubmitField(_l('Donate by credit/debit card'))
+    paypal = SubmitField(_l('Paypal'))
+    gpay = SubmitField(_l('GPay'))
+
+class PaymentForm(FlaskForm):
+    fisrtname = StringField(_l('Fisrt name'), validators=[DataRequired()])
+    lastname = StringField(_l('Last name'), validators=[DataRequired()])
+    email = StringField(_l('Email address'), validators=[DataRequired(), Email()])
+    submit = SubmitField(label=_l('Submit'))

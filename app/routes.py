@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditForm, PostForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
+    ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm
 from app.models import User, Post
 from app.email import send_password_reset_email
 from random import randint
@@ -114,9 +114,12 @@ def edit(): #唔可以係呢個位用title, 會出現TypeError
     post = Post.query.filter_by(title=title).first()
     form = EditForm(edit_post=post.body)
     if form.validate_on_submit():
-        post.body = form.edit_post.data
-        db.session.commit()
-        flash(_('Changes have been saved.'))
+        if form.submit.data:
+            post.body = form.edit_post.data
+            db.session.commit()
+            flash(_('Changes have been saved.'))
+        elif form.cancel.data:
+            flash(_('Changes have been canceled.'))
         return redirect(url_for('wiki', title=title))
     elif request.method == 'GET':
         form.edit_post.data = post.body
@@ -169,6 +172,7 @@ def wiki(title):
         if current_user.is_authenticated:
             following_post = current_user.is_following(post)
             return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
+        return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=False)
     return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[], following_post=False)
 
 
@@ -183,3 +187,32 @@ def search():
     next_url = url_for('search', keyword=keyword, page=page_num + 1) if posts.has_next else None
     prev_url = url_for('search', keyword=keyword, page=page_num - 1) if posts.has_prev else None
     return render_template('search.html.j2', title=_('Search results'), posts=posts.items, keyword=keyword, next_url=next_url, prev_url=prev_url)
+
+
+@app.route('/donate',methods=['GET', 'POST'])
+def donate():
+    form = DonationForm()
+    count_total = None
+    if form.validate_on_submit():
+        option = form.once_or_monthly.data
+        amount = form.amount.data
+        fee = form.transaction_fee.data
+        count_total = int(amount)
+        if fee:
+            count_total*=1.04  # 計算交易手續費
+        if form.card.data:
+            return redirect(url_for('payment', pay_method='card', amount=count_total))
+        elif form.paypal.data:
+            return redirect(url_for('payment', pay_method='paypal', amount=count_total))
+        else:
+            return redirect(url_for('payment', pay_method='GPay', amount=count_total))
+    return render_template('donate.html.j2',form=form)
+
+@app.route('/payment/<pay_method>=<amount>',methods=['GET', 'POST'])
+def payment(pay_method,amount):
+    form = PaymentForm(submit=pay_method)
+    if form.validate_on_submit():
+        flash('Thank you very much.')
+    elif request.method == 'GET':
+        form.submit.label.text = f'Donate with {pay_method}'
+    return render_template('donate_payment.html.j2',form=form,amount=amount)

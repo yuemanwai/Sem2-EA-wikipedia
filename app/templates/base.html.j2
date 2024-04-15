@@ -70,8 +70,9 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="{{ url_for('index') }}">
-        <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
-        {{_('Wikipedia')}}
+        {# <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
+        {{_('Wikipedia')}} #}
+       <img src="{{ url_for('static', filename='image/WikiLogo.png') }}" alt="Wikipedia" height="55px" style="margin-top: -20px;">
       </a>
     </div>
 
@@ -184,6 +185,7 @@
           <li><a href="{{ url_for('get_random_article') }}">{{ _('Random article') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('About Wikipedia') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('Contact us') }}</a></li>
+          <li><a href="{{ url_for('donate') }}">{{ _('Donate') }}</a></li>
           <br>
           <li>{{_('Contribute')}}</li>
           <hr>
@@ -233,8 +235,8 @@
           <br>
           <li>{{_('Print/export')}}</li>
           <hr>
-          <li><a href="{{ url_for('index') }}">{{ _('Download as PDF') }}</a></li>
-          <li><a href="{{ url_for('index') }}">{{ _('Printable version') }}</a></li>
+          <li><a href="#" onclick="generatePDF(); return false;">{{ _('Download as PDF') }}</a></li>
+          <li><a href="#" onclick="window.print(); return false;">{{ _('Printable version') }}</a></li>
           <br>
           <li>{{_('In other projects')}}</li>
           <hr>
@@ -293,5 +295,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
   integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
+{# for download as pdf #}
+{# 內容係code =.=" 再諗諗先 #}
+  {# <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+  <script>
+    function generatePDF() {
+      const doc = new jsPDF();
+      doc.text(10, 10, document.documentElement.innerHTML);
+      doc.save('document.pdf');
+    }
+  </script> #}
 
 {% endblock %}

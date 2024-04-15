@@ -1,0 +1,76 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block head %}
+{{super()}}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<style>
+
+h4 {
+  text-align: center;
+}
+
+p {
+  color: rgb(36, 90, 135);
+  font-size: 25px; 
+  font-weight: bold;
+}
+.vertical-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+</style>
+{% endblock head %}
+
+{% block title %}
+{{_('Make your donation now') }}
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 d-none d-md-block">
+      <img src="{{ url_for('static', filename='image/donate_3.jpg') }}" alt="donate_3">
+    </div>
+    <div class="vertical-center col-md-6 d-none d-md-block" style="font-size: 16px;">
+    <h3>
+
+      {{_('“ Imagine a world in which every single person on the planet has free access to the sum of all human
+      knowledge. ”
+      <br/> <br/><span style="float: right;font-size: 20px;">— Jimmy Wales, Founder of Wikipedia</span>') }}</h3>
+      
+    </div>
+    <div class="col-md-4">
+      <h4><b>{{ _('Donation amount') }}</b><br/>
+      <p>HK${{ amount }}</p>
+      <hr />
+      <b>{{ _('Billing information') }}</b></h4>
+      {{ wtf.quick_form(form) }}
+      {{ _('<br />
+      We do not sell or trade your information to anyone. By donating, you agree to share your personal information with
+      the Wikimedia Foundation, the nonprofit organization that hosts Wikipedia and other Wikimedia projects, and its
+      service providers pursuant to our donor policy. Wikimedia Foundation and its service providers are located in the
+      United States and in other countries whose privacy laws may not be equivalent to your own. For more information
+      please read our donor policy.<br />
+
+      Problems donating?<br />
+      Other ways to give<br />
+      Frequently asked questions<br />
+      Tax deductibility information') }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
+
+{% endblock %}

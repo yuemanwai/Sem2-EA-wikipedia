@@ -1,4 +1,19 @@
 {% extends "base2.html.j2" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 {% block read %}
-{% endblock %}
+{{_('Your watchlist has ')}} <b>{{count}}</b> {{_(' pages (and their talk pages). Changes to pages since you last visited them
+are shown with solid markers.')}}
+<br />
+
+{% if posts %}
+<br/>
+<ul>
+    {% for post in posts %}
+    <li>
+        <a href="{{ url_for('wiki',title=post.title) }}"><h3>{{ post.title }}</h3></a>
+        <p>{{ post.body }}</p>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endif %}
+{% endblock read %}

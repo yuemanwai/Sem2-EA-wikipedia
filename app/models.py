@@ -1,9 +1,9 @@
-
 from datetime import datetime, timedelta, timezone
 from hashlib import md5
+import uuid
 from app import app, db, login
 import jwt
-
+from flask import make_response
 from flask_login import UserMixin
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,14 +16,19 @@ watchlist = db.Table(
 )
 
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    email = db.Column(db.String(100), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    created_on = db.Column(db.DateTime, default=datetime.utcnow)
+    login_count = db.Column(db.Integer, default=0)
+    fail_login_count = db.Column(db.Integer, default=0)
+    is_admin = db.Column(db.Boolean, default=False)
         
+
     def __repr__(self) -> str:
         return f'<Username : {self.username}>'
 
@@ -68,12 +73,32 @@ class User(UserMixin, db.Model):
         except:           
             return None
         return User.query.get(id)
+    
+    # @staticmethod
+    # def sign_session_id(session_id):
+    #     # 使用密鑰對會話 ID 進行簽名，生成 JWT
+    #     signed_session_id = jwt.encode({'session_id': session_id}, app.config["SECRET_KEY"], algorithm='HS256')
+    #     return signed_session_id
 
+    # @staticmethod
+    # def verify_session_id(signed_session_id):
+    #     try:
+    #         # 驗證 JWT 的簽名並解碼
+    #         decoded_token = jwt.decode(signed_session_id, app.config["SECRET_KEY"], algorithms=['HS256'])
+    #     except:           
+    #         return None
+    #     return decoded_token['session_id']  # 返回會話 ID
 
+    
+    # def generate_uuid_for_session_id(self): # 用uuid造session_id
+    #     namespace = uuid.UUID('00000000-0000-0000-0000-000000000000')  # 自定義命名空間，可以使用您自己的命名空間 UUID
+    #     user_id_str = str(self.id)
+    #     generated_uuid = uuid.uuid5(namespace, user_id_str)
+    #     return generated_uuid
+    
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
-
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -81,12 +106,40 @@ class Post(db.Model):
     body = db.Column(db.String(2000))
     create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     edit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    users = db.relationship('User', secondary=watchlist,
-                            backref=db.backref('posts', lazy='dynamic'),
-                            primaryjoin=(watchlist.c.post_id == id),
-                            secondaryjoin=(watchlist.c.user_id == User.id),
-                            lazy='dynamic')
+    edit_count = db.Column(db.Integer, default=0)
+    protected = db.Column(db.Boolean, default=False)
 
+    users = db.relationship('User', secondary=watchlist,
+                        backref=db.backref('posts', lazy='dynamic'),
+                        primaryjoin=(watchlist.c.post_id == id),
+                        secondaryjoin=(watchlist.c.user_id == User.id),
+                        lazy='dynamic')
 
     def __repr__(self) -> str:
         return f'<Post title : {self.title}>'
+    
+
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    donor_id = db.Column(db.Integer, db.ForeignKey('donor.id'), nullable=False)
+    donate_on = db.Column(db.DateTime, nullable=False)
+    pay_method = db.Column(db.String(50), nullable=False)
+    pay_acc = db.Column(db.String(100), nullable=False)
+    amount_hkd = db.Column(db.Float, nullable=False)
+
+class Donor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(50), nullable=False)
+    lastname = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    monthly = db.Column(db.Boolean, nullable=False)
+
+    payments = db.relationship('Payment', backref='donor', lazy=True)
+
+
+
+# class UserSession(db.Model): # 如果要係db放session_id...
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+#     session_id = db.Column(db.PickleType)
+

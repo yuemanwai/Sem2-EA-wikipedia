@@ -1,11 +1,11 @@
-from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, g
+from datetime import datetime, timedelta
+from flask import render_template, flash, redirect, url_for, request, g, make_response, session
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
+from app.forms import LoginForm, RegistrationForm, EditForm, PostForm, \
+    ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm
 from app.models import User, Post
 from app.email import send_password_reset_email
 from random import randint
@@ -22,7 +22,9 @@ def before_request():
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
     posts = Post.query.order_by(Post.create_time.desc()).all()
-    return render_template('index.html.j2', title=_('Main_Page'), posts=posts)
+    if posts is None:
+        posts=[]
+    return render_template('index.html.j2', category=_('Main Page'), posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -31,11 +33,11 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data.capitalize()).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
+        login_user(user, remember=form.remember_me.data,duration = timedelta(days=365))
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
@@ -55,7 +57,7 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data.capitalize(), email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -96,29 +98,50 @@ def reset_password(token):
     return render_template('reset_password.html.j2', form=form)
 
 
-@app.route('/homepage/<username>')
+@app.route('/homepage', methods=['GET', 'POST'])
 @login_required
-def user(username):
-    # user = User.query.filter_by(username=username).first_or_404()
-    # posts = user.followed_posts().all()
-    return render_template('homepage.html.j2',  title=_(f'Hello, {username}!'))
+def user():
+    user = User.query.filter_by(username=current_user.username).first_or_404()
+    post = Post.query.filter_by(title=current_user.username).first()
+    form = PostForm()
+    if form.validate_on_submit():
+        if form.title.data !=current_user.username:
+            flash('Cannot change user page title.')
+            return redirect(url_for('user', username=current_user.username))
+        if post:
+            post.body = form.body.data
+        else:
+            post = Post(title=current_user.username, body=form.body.data)
+            db.session.add(post)
+        db.session.commit()
+        flash(_('Your user page has been saved.'))
+        return redirect(url_for('user', username=current_user.username))
+    elif request.method == 'GET':
+        if post:
+            form.title.data = post.title
+            form.body.data = post.body
+    return render_template('homepage.html.j2',  title=_(f'Hello, {current_user.username.capitalize()}!'), form=form, user=user)
+    
 
 
-# @app.route('/edit_profile', methods=['GET', 'POST'])
-# @login_required
-# def edit_profile():
-#     form = EditProfileForm(current_user.username)
-#     if form.validate_on_submit():
-#         current_user.username = form.username.data.capitalize()
-#         current_user.about_me = form.about_me.data.capitalize()
-#         db.session.commit()
-#         flash(_('Your changes have been saved.'))
-#         return redirect(url_for('edit_profile'))
-#     elif request.method == 'GET':
-#         form.username.data = current_user.username
-#         form.about_me.data = current_user.about_me
-#     return render_template('edit_profile.html.j2', title=_('Edit Profile'),
-#                            form=form)
+@app.route('/edit', methods=['GET', 'POST'])
+def edit(): #唔可以係呢個位用title, 會出現TypeError
+    title = request.args.get('title') 
+    if title is None:
+        print("No title provided")
+    post = Post.query.filter_by(title=title).first()
+    form = EditForm(edit_post=post.body)
+    if form.validate_on_submit():
+        if form.submit.data:
+            post.body = form.edit_post.data
+            db.session.commit()
+            flash(_('Changes have been saved.'))
+        elif form.cancel.data:
+            flash(_('Changes have been canceled.'))
+        return redirect(url_for('wiki', title=title))
+    elif request.method == 'GET':
+        form.edit_post.data = post.body
+    return render_template('edit.html.j2', title=_(f'Editing {post.title}'),form=form)
 
 
 @app.route('/follow/<title>', methods=['POST'])
@@ -141,17 +164,13 @@ def unfollow(title):
     flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
     return redirect(url_for('wiki', title=title,following_article=following_article))
 
-@app.route('/search')
-def search():
-    keyword = request.args.get('q')
-    results = 'testing'
-    return render_template('search.html.j2', title=_('Search results'),results=results, keyword=keyword)
-
-@app.route('/Watchlist')
+@app.route('/Watchlist/<username>')
 @login_required
-def watchlist():
-    return render_template('watchlist.html.j2', title=_('Watchlist'))
-
+def watchlist(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = user.followed_posts().all()
+    count = user.followed_posts().count()
+    return render_template('watchlist.html.j2', title=_('Watchlist'),posts=posts,count=count)
 
 @app.route('/random_article')
 def get_random_article():
@@ -161,16 +180,59 @@ def get_random_article():
         random_post = Post.query.get(random_id)
         if random_post:
             title = random_post.title
-            return redirect(url_for('wiki', title=title.capitalize()))
+            return redirect(url_for('wiki', title=title))
     flash('Article not found')
     return redirect(url_for('index'))
+
 
 @app.route('/wiki/<title>')
 def wiki(title):
     post =  Post.query.filter_by(title=title).first()
-    if current_user.is_authenticated:
-        following_post = current_user.is_following(post)
-    else:
-        following_post = False
-    return render_template('random_article.html.j2', title=title, posts=[post], following_post=following_post)
+    if post:
+        if current_user.is_authenticated:
+            following_post = current_user.is_following(post)
+            return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
+        return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=False)
+    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[], following_post=False)
 
+
+@app.route('/search')
+def search():
+    keyword = request.args.get('keyword', '')
+    if keyword is None:
+        return redirect(url_for('index'))
+    page_num = request.args.get('page', 1, type=int)
+    posts = Post.query.filter(Post.title.like(f'%{keyword}%')).paginate(
+        page=page_num, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+    next_url = url_for('search', keyword=keyword, page=page_num + 1) if posts.has_next else None
+    prev_url = url_for('search', keyword=keyword, page=page_num - 1) if posts.has_prev else None
+    return render_template('search.html.j2', title=_('Search results'), posts=posts.items, keyword=keyword, next_url=next_url, prev_url=prev_url)
+
+
+@app.route('/donate',methods=['GET', 'POST'])
+def donate():
+    form = DonationForm()
+    count_total = None
+    if form.validate_on_submit():
+        option = form.once_or_monthly.data
+        amount = form.amount.data
+        fee = form.transaction_fee.data
+        count_total = int(amount)
+        if fee:
+            count_total*=1.04  # 計算交易手續費
+        if form.card.data:
+            return redirect(url_for('payment', pay_method='card', amount=count_total))
+        elif form.paypal.data:
+            return redirect(url_for('payment', pay_method='paypal', amount=count_total))
+        else:
+            return redirect(url_for('payment', pay_method='GPay', amount=count_total))
+    return render_template('donate.html.j2',form=form)
+
+@app.route('/payment/<pay_method>/<amount>',methods=['GET', 'POST'])
+def payment(pay_method,amount):
+    form = PaymentForm(submit=pay_method)
+    if form.validate_on_submit():
+        pass
+    elif request.method == 'GET':
+        form.submit.label.text = f'Donate with {pay_method}'
+    return render_template('donate_payment.html.j2',form=form,amount=amount)

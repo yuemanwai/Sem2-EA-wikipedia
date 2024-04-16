@@ -1,8 +1,40 @@
 {% extends "base2.html.j2" %}
 {% block app_content %}
-{# 可以用Whoosh / Elasticsearch 做search engine #}
-<form class="d-flex-inliine" action="{{ url_for('search') }}" role="search" style="display: inline-flex;width: 800px;">
-    <input class="form-control me-2 " type="search" placeholder="{{ keyword }}" aria-label="Search" name="q">
+{# Whoosh / Elasticsearch 可以做search engine??? #}
+<form class="d-flex-inliine" action="{{ url_for('search') }}" role="search"
+    style="display: inline-flex;width: 800px;">
+    <input class="form-control me-2 " type="search" placeholder="{{ keyword }}" aria-label="Search" name="keyword">
     <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
 </form>
+
+{% if posts %}
+<br/>
+<b>{{_('There is a page named "') }}{{keyword}}{{_('" on Wikipedia') }}</b>
+<ul>
+    {% for post in posts %}
+    <li>
+        <a href="{{ url_for('wiki',title=post.title) }}"><h3>{{ post.title }}</h3></a>
+        <p>{{ post.body }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No results found.</p>
+{% endif %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> {{ _('previous posts') }}
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    {{ _('Next posts') }} <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
 {% endblock %}

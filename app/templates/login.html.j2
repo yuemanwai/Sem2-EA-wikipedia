@@ -12,8 +12,8 @@
         <a href="{{ url_for('reset_password_request') }}">{{ _("Forgot your password?") }}</a>
     </p>
     <p>
-        {{ _("Don't have an account?") }}
+        <b>{{ _("Don't have an account?") }}</b>
         <br />
         <a href="{{ url_for('register') }}">{{ _("Join Wikipedia") }}</a>
     </p>
-{% endblock %}
+{% endblock app_content %}

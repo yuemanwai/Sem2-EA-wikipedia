@@ -1,0 +1,83 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block head %}
+{{super()}}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<style>
+</style>
+{% endblock head %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 d-none d-md-block">
+      <img src="{{ url_for('static', filename='image/donate_1.jpg') }}" alt="donate_1">
+      <img src="{{ url_for('static', filename='image/donate_2.jpg') }}" alt="donate_2">
+    </div>
+    <div class="col-md-6 d-none d-md-block" style="font-size: 16px;">
+      {{_('Wikipedia is still not on the market')}}
+      <hr />
+      {{ _('Thank you for considering a donation to the Wikimedia Foundation, the nonprofit that hosts Wikipedia
+      and other crucial free knowledge projects.<br /><br />
+
+      We invite you to reflect on the number of times you visited Wikipedia in the past year. If the knowledge you
+      gained here was valuable, please join the 2%% of readers who donate to the nonprofit that supports
+      Wikipedia.<br /><br />
+
+      It is hard to know what to trust online these days. Wikipedia is different: not perfect, but also not here
+      to make a profit or to push a particular perspective. It is written by everyone, together, because they want
+      to help create a free repository of high-quality information.<br /><br />
+
+      If Wikipedia has given you useful knowledge this year, please give back. There are no small contributions:
+      every edit counts, every donation counts.<br /><br />
+
+      Thank you. ') }}
+    </div>
+    <div class="col-md-4">
+    <h4><b>{{ _('Donation amount (HKD)') }}</b></h4>
+      {{ wtf.quick_form(form) }}
+      {{ _('<br />
+      <h4><b>Where your donation goes</b></h4>
+      <b>Technology</b>: Servers, bandwidth, maintenance, development. Wikipedia is one of the top 10 websites in the
+      world,
+      and it runs on a fraction of what other top websites spend.<br />
+
+      <b>People and Projects</b>: The other top websites have thousands of employees. Wikimedia Foundation has about 700
+      staff
+      and contractors to support a wide variety of projects, making your donation a great investment in a
+      highly-efficient not-for-profit organization.') }}
+    </div>
+  </div>
+</div>
+<div class="container">
+<div class="col-md-1"></div>
+  <div class="col-md-10 text-center">
+    {{ _('Tax deductibility information<br /><br />
+
+    <p style="font-size: 12px;">We do not sell or trade your information to anyone. By donating, you agree to share your personal information with
+    the Wikimedia Foundation, the nonprofit organization that hosts Wikipedia and other Wikimedia projects, and its
+    service providers pursuant to our donor policy. Wikimedia Foundation and its service providers are located in the
+    United States and in other countries whose privacy laws may not be equivalent to your own. For more information
+    please read our donor policy.<br />
+
+    For recurring donors, fixed monthly payments will be debited by the Wikimedia Foundation on the monthly
+    anniversary of the first donation, until such time as you notify us to discontinue them. Donations initiated on
+    the 29, 30, or 31 of the month will recur on the last day of the month for shorter months, as close to the
+    original date as possible. For questions, please contact donate@wikimedia.org.<br /></p>
+
+    Problems donating? Other ways to give Frequently asked questions') }}
+  </div>
+  <div class="col-md-1"></div>
+  </div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
+
+{% endblock %}

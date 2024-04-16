@@ -50,10 +50,10 @@
 {% endblock head %}
 
 {% block title %}
-{% if title == "Main_Page" %}
-{{_('Wikipedia, the free encyclopedia') }}
-{% else %}
+{% if title  %}
 {{ title }}{{ _(' - Wikipedia') }}
+{% else %}
+{{_('Wikipedia, the free encyclopedia') }}
 {% endif %}
 {% endblock title %}
 
@@ -70,8 +70,9 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="{{ url_for('index') }}">
-        <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
-        {{_('Wikipedia')}}
+        {# <i class="fa-solid fa-earth-americas" style="font-size: 20px; "></i>
+        {{_('Wikipedia')}} #}
+       <img src="{{ url_for('static', filename='image/WikiLogo.png') }}" alt="Wikipedia" height="55px" style="margin-top: -20px;">
       </a>
     </div>
 
@@ -85,7 +86,7 @@
               {# <i class="fa-solid fa-magnifying-glass" style="font-size: 20px;margin-top:8px;color: gray;"></i> #}
             </span>
             <input class="form-control me-2" type="search" placeholder="{{ _('Search Wikipedia',) }}"
-              aria-label="Search" name="q">
+              aria-label="Search" name="keyword">
             <button class="btn btn-outline-success" type="submit">{{_('Search') }}</button>
           </form>
         </li>
@@ -118,7 +119,7 @@
         </li>
         {% else %}
         <li>
-          <a href="{{ url_for('user', username=current_user.username) }}">{{ _(current_user.username) }}</a>
+          <a href="{{ url_for('user', username=current_user.username) }}">{{ _(current_user.username.capitalize()) }}</a>
         </li>
         <li>
           <a href="{{ url_for('index') }}">
@@ -131,7 +132,7 @@
           </a>
         </li>
         <li>
-          <a href="{{ url_for('watchlist') }}">
+          <a href="{{ url_for('watchlist', username=current_user.username) }}">
             <i class="fa-regular fa-star" style="font-size: 20px; "></i>
           </a>
         </li>
@@ -184,6 +185,7 @@
           <li><a href="{{ url_for('get_random_article') }}">{{ _('Random article') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('About Wikipedia') }}</a></li>
           <li><a href="{{ url_for('index') }}">{{ _('Contact us') }}</a></li>
+          <li><a href="{{ url_for('donate') }}">{{ _('Donate') }}</a></li>
           <br>
           <li>{{_('Contribute')}}</li>
           <hr>
@@ -206,7 +208,7 @@
         {% endif %}
         {% endwith %}
         {% if title and title != "Main_Page" %}
-        <h2>&nbsp;&nbsp;&nbsp;{{ title }}</h2>
+        <h2>{{ title }}</h2>
         {% else %}
         <br/>
         {% endif %}
@@ -233,8 +235,8 @@
           <br>
           <li>{{_('Print/export')}}</li>
           <hr>
-          <li><a href="{{ url_for('index') }}">{{ _('Download as PDF') }}</a></li>
-          <li><a href="{{ url_for('index') }}">{{ _('Printable version') }}</a></li>
+          <li><a href="#" onclick="generatePDF(); return false;">{{ _('Download as PDF') }}</a></li>
+          <li><a href="#" onclick="window.print(); return false;">{{ _('Printable version') }}</a></li>
           <br>
           <li>{{_('In other projects')}}</li>
           <hr>
@@ -293,5 +295,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
   integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script defer src="https://use.fontawesome.com/releases/v6.5.0/js/all.js"></script>
+{# for download as pdf #}
+{# 內容係code =.=" 再諗諗先 #}
+  {# <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+  <script>
+    function generatePDF() {
+      const doc = new jsPDF();
+      doc.text(10, 10, document.documentElement.innerHTML);
+      doc.save('document.pdf');
+    }
+  </script> #}
 
 {% endblock %}

@@ -13,8 +13,9 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    ADMINS = ['cywong@example.com']
-    POSTS_PER_PAGE = 3
+    ADMINS = ['wai@example.com']
+    POSTS_PER_PAGE = 10
     LANGUAGES = ['en', 'es', 'zh']
+    # 要有domain,然後去google申請條key, https://www.google.com/recaptcha/admin
     RECAPTCHA_PUBLIC_KEY='no-key'
     RECAPTCHA_PRIVATE_KEY='no-key'

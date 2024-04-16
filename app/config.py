@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess"
+    # 放上cloud, 可以選擇用rds, 只需放endpoint係度
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or \
         'postgresql://postgres:postgres@postgresdb:5432/postgres'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

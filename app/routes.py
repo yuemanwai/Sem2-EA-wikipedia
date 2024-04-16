@@ -21,10 +21,7 @@ def before_request():
 @app.route('/', methods=['GET'])
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
-    posts = Post.query.order_by(Post.create_time.desc()).all()
-    if posts is None:
-        posts=[]
-    return render_template('index.html.j2', category=_('Main Page'), posts=posts)
+    return render_template('index.html.j2', category=_('Main Page'))
 
 
 @app.route('/login', methods=['GET', 'POST'])

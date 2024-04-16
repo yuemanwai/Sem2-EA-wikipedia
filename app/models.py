@@ -169,6 +169,33 @@ class Category(db.Model):
 def _repr_(self):
         return f"Category(id={self.id}, name='{self.name}')"
     
+
+class Link(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(255), nullable=False)
+
+    def _repr_(self):
+        return f"Link(id={self.id}, url='{self.url}')"
+
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    value = db.Column(db.Integer, nullable=False)
+
+    def _repr_(self):
+        return f"Vote(id={self.id}, value={self.value})"
+
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    action = db.Column(db.String(20), nullable=False)
+
+    def _repr_(self):
+        return f"History(id={self.id}, action='{self.action}')"
+
+
 # class UserSession(db.Model): # 如果要係db放session_id...
 #     id = db.Column(db.Integer, primary_key=True)
 #     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

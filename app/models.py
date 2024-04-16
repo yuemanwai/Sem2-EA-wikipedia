@@ -138,17 +138,24 @@ class Donor(db.Model):
     payments = db.relationship('Payment', backref='donor', lazy=True)
 
 class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
-
+    pubDate = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    
+    def _repr_(self):
+        return f"Article(id={self.id}, title='{self.title}')"
+        
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     birth_date = db.Column(db.Date)
     nationality = db.Column(db.String(50))
     books = db.relationship('Editor', backref='author', lazy=True)
-
+ 
+def _repr_(self):
+        return f"Author(id={self.id}, name='{self.name}')"
+    
 class Editor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -159,7 +166,9 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
-
+def _repr_(self):
+        return f"Category(id={self.id}, name='{self.name}')"
+    
 # class UserSession(db.Model): # 如果要係db放session_id...
 #     id = db.Column(db.Integer, primary_key=True)
 #     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

@@ -195,6 +195,27 @@ class History(db.Model):
     def _repr_(self):
         return f"History(id={self.id}, action='{self.action}')"
 
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"Tag(id={self.id}, name='{self.name}')"
+
+class Revision(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Revision(id={self.id})"
+
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"Image(id={self.id}, filename='{self.filename}')"
 
 # class UserSession(db.Model): # 如果要係db放session_id...
 #     id = db.Column(db.Integer, primary_key=True)

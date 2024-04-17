@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm
-from app.models import User, Post, Image,Donor,Payment
+from app.models import User, Post, Image,Donor,Payment,IP
 from app.email import send_password_reset_email
 from random import randint
 from werkzeug.utils import secure_filename
@@ -107,6 +107,11 @@ def user():
         if not post:
             post = Post(title=current_user.username, body=form.body.data)
             db.session.add(post)
+            ip = IP.query.filter_by(post_id=post.id).first() or None
+            if not ip:
+                ip = IP(post_id=post.id, ip_addr=request.remote_addr)
+                db.session.add(ip)
+                flash('We will store your IP address')
         else:
             if form.title.data !=current_user.username:
                 flash('Cannot change user page title.')
@@ -251,3 +256,5 @@ def payment(pay_method,amount,donate_form):
     elif request.method == 'GET':
         payment_form.submit.label.text = f'Donate with {pay_method}'
     return render_template('donate_payment.html.j2',form=payment_form,amount=amount)
+
+

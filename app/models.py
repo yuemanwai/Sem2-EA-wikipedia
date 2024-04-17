@@ -224,3 +224,11 @@ class Image(db.Model):
     def __repr__(self):
             return f"<Image(id={self.id}, post_id={self.post_id}, filename='{self.filename}')>"
     
+
+class IP(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), index=True, unique=True, nullable=False)
+    ip_addr = db.Column(db.String(100), index=True, unique=True, nullable=False)
+
+    def __repr__(self):
+            return f"<IP(id={self.id}, post_id={self.post_id}, ip='{self.ip}')>"

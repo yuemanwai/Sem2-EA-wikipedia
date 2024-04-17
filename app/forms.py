@@ -72,7 +72,8 @@ class DonationForm(FlaskForm):
     gpay = SubmitField(_l('GPay'))
 
 class PaymentForm(FlaskForm):
-    fisrtname = StringField(_l('Fisrt name'), validators=[DataRequired()])
+    firstname = StringField(_l('First name'), validators=[DataRequired()])
     lastname = StringField(_l('Last name'), validators=[DataRequired()])
     email = StringField(_l('Email address'), validators=[DataRequired(), Email()])
+    pay_acc=StringField(_l('Account'), validators=[DataRequired()])
     submit = SubmitField(label=_l('Submit'))

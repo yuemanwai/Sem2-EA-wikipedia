@@ -6,5 +6,3 @@ if __name__ == '__main__':
     # print (x or None)
     # print (x is not None)
     
-from flask import request
-print (request.remote_addr)

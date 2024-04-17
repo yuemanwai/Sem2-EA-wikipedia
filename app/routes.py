@@ -6,9 +6,11 @@ from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm
-from app.models import User, Post
+from app.models import User, Post, Image,Donor,Payment
 from app.email import send_password_reset_email
 from random import randint
+from werkzeug.utils import secure_filename
+import os
 
 @app.before_request
 def before_request():
@@ -21,10 +23,7 @@ def before_request():
 @app.route('/', methods=['GET'])
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
-    posts = Post.query.order_by(Post.create_time.desc()).all()
-    if posts is None:
-        posts=[]
-    return render_template('index.html.j2', category=_('Main Page'), posts=posts)
+    return render_template('index.html.j2', category=_('Main Page'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -102,27 +101,38 @@ def reset_password(token):
 @login_required
 def user():
     user = User.query.filter_by(username=current_user.username).first_or_404()
-    post = Post.query.filter_by(title=current_user.username).first()
     form = PostForm()
     if form.validate_on_submit():
-        if form.title.data !=current_user.username:
-            flash('Cannot change user page title.')
-            return redirect(url_for('user', username=current_user.username))
-        if post:
-            post.body = form.body.data
-        else:
+        post = Post.query.filter_by(title=current_user.username).first() or None
+        if not post:
             post = Post(title=current_user.username, body=form.body.data)
             db.session.add(post)
+        else:
+            if form.title.data !=current_user.username:
+                flash('Cannot change user page title.')
+                return redirect(url_for('user', username=current_user.username))
+            post.body = form.body.data
+            image = Image.query.filter_by(post_id=post.id).first() or None
+            if image:
+                image.post_id = post.id
+                image.filename = post.title
+            f = form.image.data
+            filename = secure_filename(post.title)
+            f.save(os.path.join(
+            "app", 'static', 'image',filename)+'.jpg')
+            image = Image(post_id= post.id,filename = post.title)
+            db.session.add(image)
         db.session.commit()
         flash(_('Your user page has been saved.'))
         return redirect(url_for('user', username=current_user.username))
     elif request.method == 'GET':
+        post = Post.query.filter_by(title=current_user.username).first() or None
         if post:
             form.title.data = post.title
             form.body.data = post.body
-    return render_template('homepage.html.j2',  title=_(f'Hello, {current_user.username.capitalize()}!'), form=form, user=user)
+    image_path = os.path.join('static', 'image', user.username)+'.jpg'
+    return render_template('homepage.html.j2',  title=_(f'Hello, {current_user.username.capitalize()}!'), form=form, user=user, image_path=image_path)
     
-
 
 @app.route('/edit', methods=['GET', 'POST'])
 def edit(): #唔可以係呢個位用title, 會出現TypeError
@@ -219,20 +229,25 @@ def donate():
         fee = form.transaction_fee.data
         count_total = int(amount)
         if fee:
-            count_total*=1.04  # 計算交易手續費
+            count_total*=1.04  # Amount+交易手續費
         if form.card.data:
-            return redirect(url_for('payment', pay_method='card', amount=count_total))
+            pay_method='card'
         elif form.paypal.data:
-            return redirect(url_for('payment', pay_method='paypal', amount=count_total))
+            pay_method='paypal'
         else:
-            return redirect(url_for('payment', pay_method='GPay', amount=count_total))
+            pay_method='GPay'
+        return redirect(url_for('payment', pay_method=pay_method, amount=count_total, donate_form=form))
     return render_template('donate.html.j2',form=form)
 
 @app.route('/payment/<pay_method>/<amount>',methods=['GET', 'POST'])
-def payment(pay_method,amount):
-    form = PaymentForm(submit=pay_method)
-    if form.validate_on_submit():
-        pass
+def payment(pay_method,amount,donate_form):
+    payment_form = PaymentForm(submit=pay_method)
+    if payment_form.validate_on_submit():
+        donor = Donor()
+        db.session.add(donor)
+        db.session.commit()
+        flash('Thank you for donation!')
+        return redirect(url_for('payment'))
     elif request.method == 'GET':
-        form.submit.label.text = f'Donate with {pay_method}'
-    return render_template('donate_payment.html.j2',form=form,amount=amount)
+        payment_form.submit.label.text = f'Donate with {pay_method}'
+    return render_template('donate_payment.html.j2',form=payment_form,amount=amount)

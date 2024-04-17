@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm,RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField, SelectField, RadioField
+    TextAreaField, SelectField, RadioField,FileField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length, InputRequired
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 from app.config import Config
+from flask_wtf.file import FileField, FileRequired
 
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
@@ -58,6 +59,7 @@ class EditForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField(_l('Title'), validators=[DataRequired()])
     body = TextAreaField(_l('Body'), validators=[DataRequired()])
+    image = FileField(_l('Photo'))
     submit = SubmitField(_l('Publish page'))
 
 

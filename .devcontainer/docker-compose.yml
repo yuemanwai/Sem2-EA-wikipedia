@@ -17,9 +17,6 @@ services:
       - "5000:5000" # app port
       - "5001:5001" # app(debug) port
       - "3000:3000" # remote debugger attach port
-   # deploy:
-    #  replicas: 2  # 設置所需的副本數量
-
 
   postgresdb:
     container_name: postgres_container

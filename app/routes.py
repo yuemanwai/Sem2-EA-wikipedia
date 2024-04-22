@@ -6,11 +6,12 @@ from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm
-from app.models import User, Post, Image,Donor,Payment
+from app.models import User, Post, Image, Donor, Payment, IP
 from app.email import send_password_reset_email
 from random import randint
 from werkzeug.utils import secure_filename
 import os
+
 
 @app.before_request
 def before_request():
@@ -36,7 +37,8 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data,duration = timedelta(days=365))
+        login_user(user, remember=form.remember_me.data,
+                   duration=timedelta(days=365))
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
@@ -103,12 +105,18 @@ def user():
     user = User.query.filter_by(username=current_user.username).first_or_404()
     form = PostForm()
     if form.validate_on_submit():
-        post = Post.query.filter_by(title=current_user.username).first() or None
+        post = Post.query.filter_by(
+            title=current_user.username).first() or None
         if not post:
             post = Post(title=current_user.username, body=form.body.data)
             db.session.add(post)
+            ip = IP.query.filter_by(post_id=post.id).first() or None
+            if not ip:
+                ip = IP(post_id=post.id, ip_addr=request.remote_addr)
+                db.session.add(ip)
+                flash('We will store your IP address')
         else:
-            if form.title.data !=current_user.username:
+            if form.title.data != current_user.username:
                 flash('Cannot change user page title.')
                 return redirect(url_for('user', username=current_user.username))
             post.body = form.body.data
@@ -119,24 +127,25 @@ def user():
             f = form.image.data
             filename = secure_filename(post.title)
             f.save(os.path.join(
-            "app", 'static', 'image',filename)+'.jpg')
-            image = Image(post_id= post.id,filename = post.title)
+                "app", 'static', 'image', filename)+'.jpg')
+            image = Image(post_id=post.id, filename=post.title)
             db.session.add(image)
         db.session.commit()
         flash(_('Your user page has been saved.'))
         return redirect(url_for('user', username=current_user.username))
     elif request.method == 'GET':
-        post = Post.query.filter_by(title=current_user.username).first() or None
+        post = Post.query.filter_by(
+            title=current_user.username).first() or None
         if post:
             form.title.data = post.title
             form.body.data = post.body
     image_path = os.path.join('static', 'image', user.username)+'.jpg'
     return render_template('homepage.html.j2',  title=_(f'Hello, {current_user.username.capitalize()}!'), form=form, user=user, image_path=image_path)
-    
+
 
 @app.route('/edit', methods=['GET', 'POST'])
-def edit(): #唔可以係呢個位用title, 會出現TypeError
-    title = request.args.get('title') 
+def edit():  # 唔可以係呢個位用title, 會出現TypeError
+    title = request.args.get('title')
     if title is None:
         print("No title provided")
     post = Post.query.filter_by(title=title).first()
@@ -151,7 +160,7 @@ def edit(): #唔可以係呢個位用title, 會出現TypeError
         return redirect(url_for('wiki', title=title))
     elif request.method == 'GET':
         form.edit_post.data = post.body
-    return render_template('edit.html.j2', title=_(f'Editing {post.title}'),form=form)
+    return render_template('edit.html.j2', title=_(f'Editing {post.title}'), form=form)
 
 
 @app.route('/follow/<title>', methods=['POST'])
@@ -160,9 +169,10 @@ def follow(title):
     post = Post.query.filter_by(title=title).first()
     current_user.follow(post)
     db.session.commit()
-    following_article=True
+    following_article = True
     flash(_('<%(title)s> and its talk page have been added to your watchlist permanently.', title=title))
     return redirect(url_for('wiki', title=title, following_article=following_article))
+
 
 @app.route('/unfollow/<title>', methods=['POST'])
 @login_required
@@ -170,9 +180,10 @@ def unfollow(title):
     post = Post.query.filter_by(title=title).first()
     current_user.unfollow(post)
     db.session.commit()
-    following_article=False
+    following_article = False
     flash(_('<%(title)s> and its talk page have been removed from your watchlist.', title=title))
-    return redirect(url_for('wiki', title=title,following_article=following_article))
+    return redirect(url_for('wiki', title=title, following_article=following_article))
+
 
 @app.route('/Watchlist/<username>')
 @login_required
@@ -180,7 +191,8 @@ def watchlist(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.followed_posts().all()
     count = user.followed_posts().count()
-    return render_template('watchlist.html.j2', title=_('Watchlist'),posts=posts,count=count)
+    return render_template('watchlist.html.j2', title=_('Watchlist'), posts=posts, count=count)
+
 
 @app.route('/random_article')
 def get_random_article():
@@ -197,13 +209,13 @@ def get_random_article():
 
 @app.route('/wiki/<title>')
 def wiki(title):
-    post =  Post.query.filter_by(title=title).first()
+    post = Post.query.filter_by(title=title).first()
     if post:
         if current_user.is_authenticated:
             following_post = current_user.is_following(post)
-            return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=following_post)
-        return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[post], following_post=False)
-    return render_template('random_article.html.j2', category=_('Article'),title=title, posts=[], following_post=False)
+            return render_template('random_article.html.j2', category=_('Article'), title=title, posts=[post], following_post=following_post)
+        return render_template('random_article.html.j2', category=_('Article'), title=title, posts=[post], following_post=False)
+    return render_template('random_article.html.j2', category=_('Article'), title=title, posts=[], following_post=False)
 
 
 @app.route('/search')
@@ -214,12 +226,14 @@ def search():
     page_num = request.args.get('page', 1, type=int)
     posts = Post.query.filter(Post.title.like(f'%{keyword}%')).paginate(
         page=page_num, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for('search', keyword=keyword, page=page_num + 1) if posts.has_next else None
-    prev_url = url_for('search', keyword=keyword, page=page_num - 1) if posts.has_prev else None
+    next_url = url_for('search', keyword=keyword,
+                       page=page_num + 1) if posts.has_next else None
+    prev_url = url_for('search', keyword=keyword,
+                       page=page_num - 1) if posts.has_prev else None
     return render_template('search.html.j2', title=_('Search results'), posts=posts.items, keyword=keyword, next_url=next_url, prev_url=prev_url)
 
 
-@app.route('/donate',methods=['GET', 'POST'])
+@app.route('/donate', methods=['GET', 'POST'])
 def donate():
     form = DonationForm()
     count_total = None
@@ -229,25 +243,36 @@ def donate():
         fee = form.transaction_fee.data
         count_total = int(amount)
         if fee:
-            count_total*=1.04  # Amount+交易手續費
+            count_total *= 1.04  # Amount+交易手續費
         if form.card.data:
-            pay_method='card'
+            pay_method = 'card'
         elif form.paypal.data:
-            pay_method='paypal'
+            pay_method = 'paypal'
         else:
-            pay_method='GPay'
+            pay_method = 'GPay'
         return redirect(url_for('payment', pay_method=pay_method, amount=count_total, donate_form=form))
-    return render_template('donate.html.j2',form=form)
+    return render_template('donate.html.j2', form=form)
 
-@app.route('/payment/<pay_method>/<amount>',methods=['GET', 'POST'])
-def payment(pay_method,amount,donate_form):
+
+@app.route('/payment/<pay_method>/<amount>/<donate_form>', methods=['GET', 'POST'])
+def payment(pay_method, amount, donate_form):
     payment_form = PaymentForm(submit=pay_method)
     if payment_form.validate_on_submit():
-        donor = Donor()
+        print (donate_form.once_or_monthly.data)
+        if donate_form.once_or_monthly.data == "monthly":
+            monthly = True
+        else:
+            monthly = False
+
+        donor = Donor(firstname=payment_form.firstname.data, lastname=payment_form.lastname.data, \
+                      email=payment_form.email.data, monthly=monthly)
+        payment=Payment(donor_id=donate_form.donor_id.data, pay_method=donate_form.pay_method.data, \
+                      pay_acc=donate_form.pay_acc.data, amount_hkd=donate_form.amount.data,donate_on=datetime.utcnow())
         db.session.add(donor)
+        db.session.add(payment)
         db.session.commit()
         flash('Thank you for donation!')
         return redirect(url_for('payment'))
     elif request.method == 'GET':
         payment_form.submit.label.text = f'Donate with {pay_method}'
-    return render_template('donate_payment.html.j2',form=payment_form,amount=amount)
+    return render_template('donate_payment.html.j2', form=payment_form, amount=amount)

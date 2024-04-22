@@ -137,15 +137,6 @@ class Donor(db.Model):
 
     payments = db.relationship('Payment', backref='donor', lazy=True)
 
-class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(255), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    pubDate = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    
-    def _repr_(self):
-        return f"Article(id={self.id}, title='{self.title}')"
-        
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -170,17 +161,10 @@ def _repr_(self):
         return f"Category(id={self.id}, name='{self.name}')"
     
 
-class Link(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(255), nullable=False)
-
-    def _repr_(self):
-        return f"Link(id={self.id}, url='{self.url}')"
-
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    article_id = db.Column(db.Integer, nullable=False)
     value = db.Column(db.Integer, nullable=False)
 
     def _repr_(self):
@@ -188,7 +172,7 @@ class Vote(db.Model):
 
 class History(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    article_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     action = db.Column(db.String(20), nullable=False)
 
@@ -204,7 +188,7 @@ class Tag(db.Model):
 
 class Revision(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    article_id = db.Column(db.Integer,  nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
@@ -224,3 +208,18 @@ class Image(db.Model):
     def __repr__(self):
             return f"<Image(id={self.id}, post_id={self.post_id}, filename='{self.filename}')>"
     
+
+class IP(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), index=True, unique=True, nullable=False)
+    ip_addr = db.Column(db.String(50), index=True, unique=True, nullable=False)
+
+    def __repr__(self):
+            return f"<IP(id={self.id}, post_id={self.post_id}, ip='{self.ip}')>"
+    
+class Link(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String(200), index=True, unique=True, nullable=False)
+
+    def __repr__(self):
+            return f"<Link(id={self.id}, link='{self.link}')>"

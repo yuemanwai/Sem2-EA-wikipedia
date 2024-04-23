@@ -77,3 +77,8 @@ class PaymentForm(FlaskForm):
     email = StringField(_l('Email address'), validators=[DataRequired(), Email()])
     pay_acc=StringField(_l('Account'), validators=[DataRequired()])
     submit = SubmitField(label=_l('Submit'))
+
+class CeventForm(FlaskForm):
+    name=StringField(_l('Guest_name'), validators=[DataRequired()])
+    message=StringField(_l('Message'), validators=[DataRequired()])
+    submit = SubmitField(_l('Send love'))

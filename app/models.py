@@ -223,3 +223,8 @@ class Link(db.Model):
 
     def __repr__(self):
             return f"<Link(id={self.id}, link='{self.link}')>"
+    
+class Current_event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    message = db.Column(db.String(200), unique=True, nullable=False)

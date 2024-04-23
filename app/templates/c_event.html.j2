@@ -1,0 +1,17 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %}
+    <title>WikiLove Sent</title>
+{% endblock title %}
+
+{% block app_content %}
+    <div class="row">
+    <div class="col-md-4">{{ wtf.quick_form(form) }}</div>
+    <h1>Send WikiLove</h1>
+      <ul>
+        {% for name, message in Cform %}
+        <li><strong>{{ name }}</strong>: {{ message }}</li>
+        </ul> 
+    </div>
+        {% endfor %}
+{% endblock app_content %}

@@ -5,8 +5,8 @@ from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditForm, PostForm, \
-    ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm
-from app.models import User, Post, Image, Donor, Payment, IP
+    ResetPasswordRequestForm, ResetPasswordForm, DonationForm, PaymentForm, CeventForm
+from app.models import User, Post, Image, Donor, Payment, IP, Current_event
 from app.email import send_password_reset_email
 from random import randint
 from werkzeug.utils import secure_filename
@@ -276,3 +276,16 @@ def payment(pay_method, amount, donate_form):
     elif request.method == 'GET':
         payment_form.submit.label.text = f'Donate with {pay_method}'
     return render_template('donate_payment.html.j2', form=payment_form, amount=amount)
+
+@app.route('/c_event', methods=['GET', 'POST'])
+def c_event():
+    Cform=CeventForm()
+    if Cform.validate_on_submit():
+        name =Cform.name.data
+        message =Cform.message.data
+        current_event = Current_event(name=name, message=message)
+        db.session.add(current_event)
+        db.session.commit()
+        flash('WikiLove Sent Successfully!')
+        return render_template('c_event.html.j2', form=Cform)
+    return redirect(url_for('index'))

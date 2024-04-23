@@ -126,7 +126,7 @@ class Payment(db.Model):
     donate_on = db.Column(db.DateTime, nullable=False)
     pay_method = db.Column(db.String(50), nullable=False)
     pay_acc = db.Column(db.String(100), nullable=False)
-    amount_hkd = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return f"<Payment(id={self.id}, donor_id='{self.donor_id}, pay_method='{self.pay_method}, amount_hkd='{self.amount_hkd}')>"

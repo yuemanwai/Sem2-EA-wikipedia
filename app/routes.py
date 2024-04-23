@@ -11,6 +11,8 @@ from app.email import send_password_reset_email
 from random import randint
 from werkzeug.utils import secure_filename
 import os
+import time
+import random
 
 
 @app.before_request
@@ -74,6 +76,8 @@ def reset_password_request():
         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
+        # Add a random delay
+        time.sleep(random.randint(1, 5))
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
@@ -251,32 +255,42 @@ def donate():
             pay_method = 'paypal'
         else:
             pay_method = 'GPay'
-        return redirect(url_for('payment', pay_method=pay_method, amount=count_total, donate_form=form))
+        return redirect(url_for('payment', pay_method=pay_method, amount=count_total,option=str(option), donate_form=form))
     return render_template('donate.html.j2', form=form)
 
 
-@app.route('/payment/<pay_method>/<amount>/<donate_form>', methods=['GET', 'POST'])
-def payment(pay_method, amount, donate_form):
+@app.route('/payment/<pay_method>/<amount>/<option>', methods=['GET', 'POST'])
+def payment(pay_method, amount, option):
     payment_form = PaymentForm(submit=pay_method)
     if payment_form.validate_on_submit():
-        print (donate_form.once_or_monthly.data)
-        if donate_form.once_or_monthly.data == "monthly":
+        firstname=payment_form.firstname.data
+        lastname=payment_form.lastname.data
+        email=payment_form.email.data
+        donate_on=datetime.utcnow()
+        pay_acc=payment_form.pay_acc.data
+        if option == "monthly":
             monthly = True
         else:
             monthly = False
-
-        donor = Donor(firstname=payment_form.firstname.data, lastname=payment_form.lastname.data, \
-                      email=payment_form.email.data, monthly=monthly)
-        payment=Payment(donor_id=donate_form.donor_id.data, pay_method=donate_form.pay_method.data, \
-                      pay_acc=donate_form.pay_acc.data, amount_hkd=donate_form.amount.data,donate_on=datetime.utcnow())
+        donor = Donor(firstname=firstname, lastname=lastname, email=email, monthly=monthly)
         db.session.add(donor)
-        db.session.add(payment)
         db.session.commit()
-        flash('Thank you for donation!')
-        return redirect(url_for('payment'))
+        return redirect(url_for('payment_loading', firstname=firstname,lastname=lastname,donate_on=donate_on,pay_acc=pay_acc,pay_method=pay_method,amount=amount))
     elif request.method == 'GET':
         payment_form.submit.label.text = f'Donate with {pay_method}'
     return render_template('donate_payment.html.j2', form=payment_form, amount=amount)
+
+@app.route('/payment_loading/<firstname>/<lastname>/<donate_on>/<pay_acc>/<pay_method>/<amount>', methods=['GET','POST'])
+def payment_loading(firstname,lastname,donate_on,pay_acc,pay_method,amount):
+    donor = Donor.query.filter_by(firstname=firstname,lastname=lastname).first() or None
+    if donor:
+        payment=Payment(donor_id=donor.id,donate_on=donate_on, \
+                        pay_method=pay_method, pay_acc=pay_acc, amount=amount)
+        flash('Thank you for your donation!')
+        db.session.add(payment)
+        db.session.commit()
+    return redirect(url_for('index'))
+
 
 @app.route('/c_event', methods=['GET', 'POST'])
 def c_event():

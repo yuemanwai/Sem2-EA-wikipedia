@@ -128,6 +128,9 @@ class Payment(db.Model):
     pay_acc = db.Column(db.String(100), nullable=False)
     amount_hkd = db.Column(db.Float, nullable=False)
 
+    def __repr__(self):
+        return f"<Payment(id={self.id}, donor_id='{self.donor_id}, pay_method='{self.pay_method}, amount_hkd='{self.amount_hkd}')>"
+
 class Donor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(50), nullable=False)
@@ -136,6 +139,9 @@ class Donor(db.Model):
     monthly = db.Column(db.Boolean, nullable=False)
 
     payments = db.relationship('Payment', backref='donor', lazy=True)
+
+    def __repr__(self):
+        return f"<Donor(id={self.id}, firstname='{self.firstname}, lastname='{self.lastname}, monthly='{self.monthly}')>"
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -206,7 +212,7 @@ class Image(db.Model):
     filename = db.Column(db.String(100), index=True, unique=True, nullable=False)
 
     def __repr__(self):
-            return f"<Image(id={self.id}, post_id={self.post_id}, filename='{self.filename}')>"
+        return f"<Image(id={self.id}, post_id={self.post_id}, filename='{self.filename}')>"
     
 
 class IP(db.Model):
@@ -215,16 +221,19 @@ class IP(db.Model):
     ip_addr = db.Column(db.String(50), index=True, unique=True, nullable=False)
 
     def __repr__(self):
-            return f"<IP(id={self.id}, post_id={self.post_id}, ip='{self.ip}')>"
+        return f"<IP(id={self.id}, post_id={self.post_id}, ip='{self.ip}')>"
     
 class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     link = db.Column(db.String(200), index=True, unique=True, nullable=False)
 
     def __repr__(self):
-            return f"<Link(id={self.id}, link='{self.link}')>"
+        return f"<Link(id={self.id}, link='{self.link}')>"
     
 class Current_event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
-    message = db.Column(db.String(200), unique=True, nullable=False)
+    message = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return f"<Current_event(id={self.id}, name='{self.name}, message='{self.message}')>"

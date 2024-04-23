@@ -15,7 +15,7 @@
         <h3>{{ _('Welcome to') }} <a href="{{ url_for('wiki',title='Wikipedia') }}">{{ _('Wikipedia') }}</a>,</h3>
         {{ _('the free encyclopedia that') }} <a href="{{ url_for('edit') }}">{{ _('anyone can edit.') }}</a>
         <br/>
-        <a href="{{ url_for('index') }}">{{ _('%(numofposts)d', numofposts=posts|length) }}</a>{{ _(' articles in English') }} <br/>
+        <a href="{{ url_for('search') }}">{{ _('%(count)d', count=count) }}</a>{{ _(' articles in English') }} <br/>
     </div>
         {% if post %}
             {% for post in posts %}

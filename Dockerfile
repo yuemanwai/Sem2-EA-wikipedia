@@ -1,18 +1,21 @@
-ARG VARIANT=3-bullseye
-FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
+FROM python:3.11-alpine
 
-ENV PYTHONUNBUFFERED 1
+RUN adduser -D wikipedia
+WORKDIR /home/wikipedia
 
-COPY requirements.txt /tmp/pip-tmp/
-RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-   && rm -rf /tmp/pip-tmp
+COPY requirements.txt requirements.txt
+RUN python3 -m venv venv
+RUN pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt
 
 COPY app app
 COPY migrations migrations
 COPY wikipedia.py run.py boot.sh ./
-RUN chmod +x boot.sh
 
+RUN chmod +x boot.sh
 ENV FLASK_APP run.py
+RUN chown -R wikipedia:wikipedia ./
+
+USER wikipedia
 
 EXPOSE 5000
 ENTRYPOINT ["./boot.sh"]

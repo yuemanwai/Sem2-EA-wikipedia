@@ -24,7 +24,8 @@ def before_request():
 @app.route('/', methods=['GET'])
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
-    return render_template('index.html.j2', category=_('Main Page'))
+    count = Post.query.count()
+    return render_template('index.html.j2', category=_('Main Page'), count=count)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -287,5 +288,10 @@ def c_event():
         db.session.add(current_event)
         db.session.commit()
         flash('WikiLove Sent Successfully!')
-        return render_template('c_event.html.j2', form=Cform)
-    return redirect(url_for('index'))
+        return redirect(url_for('c_event'))
+    page_num = request.args.get('page', 1, type=int)
+    events = Current_event.query.paginate(
+        page=page_num, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+    next_url = url_for('c_event', page=page_num + 1) if events.has_next else None
+    prev_url = url_for('c_event', page=page_num - 1) if events.has_prev else None
+    return render_template('c_event.html.j2',title=_('WikiLove Sent'), form=Cform, events=events.items, next_url=next_url, prev_url=prev_url)

@@ -11,6 +11,8 @@ from app.email import send_password_reset_email
 from random import randint
 from werkzeug.utils import secure_filename
 import os
+import time
+import random
 
 
 @app.before_request
@@ -74,6 +76,8 @@ def reset_password_request():
         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
+        # Add a random delay
+        time.sleep(random.randint(1, 5))
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)

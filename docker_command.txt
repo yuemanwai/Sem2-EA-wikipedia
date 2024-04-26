@@ -1,4 +1,12 @@
-sudo docker build -t wikipedia:latest .
+sudo docker build -t yuemanwai/wikipedia:latest .
+sudo docker push yuemanwai/wikipedia:latest
+sudo docker-compose up
+sudo docker-compose down
+sudo lsof -i :5000
+sudo docker ps
+
+
+
 sudo docker swarm init
 sudo docker stack deploy -c docker-compose.yml wikipediastack
 sudo docker stack rm wikipediastack

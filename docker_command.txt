@@ -1,6 +1,9 @@
 常用cmd：
 sudo docker build -t yuemanwai/wikipedia:latest .
 sudo docker push yuemanwai/wikipedia:latest
+
+cloud9 上用docker—compose：
+sudo docker login
 sudo docker-compose up
 sudo docker-compose down
 

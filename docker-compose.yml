@@ -1,64 +1,68 @@
 version: "3"
 
 services:
-  web:
-    image: wikipedia
+  app:
+    image: yuemanwai/wikipedia
     deploy:
       replicas: 2
       restart_policy:
         condition: on-failure
         delay: 5s
-    ports:
-      - 5000:5000
     environment:
-      MYSQL_ROOT_PASSWORD: password
       SECRET_KEY: you-will-never-guess
-      MAIL_SERVER: mailhog
-      MAIL_PORT: 1025
       DATABASE_URL: postgresql://postgres:postgres@postgresdb:5432/postgres
     networks:
-      - webnet
-
-  visualizer:
-    image: dockersamples/visualizer:stable
+      - flask_app
     ports:
-      - 8081:8080
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-    networks:
-      - webnet
-
-  db:
-    image: mysql/mysql-server:5.7
-    command: --default-authentication-plugin=mysql_native_password
+      - 5000:5000
+      
+  postgresdb:
+    container_name: postgres_container
+    image: postgres
     environment:
-      MYSQL_ROOT_PASSWORD: microblog
-      MYSQL_DATABASE: microblog
-      MYSQL_USER: microblog
-      MYSQL_PASSWORD: password
-    networks:
-      - webnet
-
-  adminer:
-    image: adminer
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
     ports:
-      - 8080:8080
-    deploy:
-      placement:
-        constraints: [node.role == manager]
+      - "5432:5432"
     networks:
-      - webnet
+      - flask_app
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_PROXY_X_HOST_COUNT: 1
+      PGADMIN_CONFIG_PROXY_X_PREFIX_COUNT: 1
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "80:80"
+    networks:
+      - flask_app
+    restart: unless-stopped
 
   mailhog:
-    image: mailhog/mailhog:v1.0.0
+    image: mailhog/mailhog
+    logging:
+      driver: 'none' # disable saving logs
     ports:
-      - 1025:1025
-      - 8025:8025
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
     networks:
-      - webnet
+      - flask_app
 
 networks:
-  webnet:
+  flask_app:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:

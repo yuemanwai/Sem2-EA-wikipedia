@@ -4,7 +4,7 @@ sudo docker push yuemanwai/wikipedia:latest
 
 cloud9 上用docker—compose：
 sudo docker login
-sudo docker-compose up
+sudo docker-compose up -d
 sudo docker-compose down
 
 cloud9 上安裝docker：
@@ -12,7 +12,7 @@ sudo yum install -y docker
 sudo service docker start
 
 cloud9 上安裝docker-compose：
-sudo curl -L "[6](https://github.com/docker/compose/releases/download/1.23.1/docker-compose-)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 

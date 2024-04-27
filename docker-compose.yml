@@ -4,7 +4,7 @@ services:
   app:
     image: yuemanwai/wikipedia
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -32,9 +32,37 @@ services:
       - flask_app
     restart: unless-stopped
 
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_PROXY_X_HOST_COUNT: 1
+      PGADMIN_CONFIG_PROXY_X_PREFIX_COUNT: 1
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "80:80"
+    networks:
+      - flask_app
+    restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none' # disable saving logs
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+    networks:
+      - flask_app
+
 networks:
   flask_app:
     driver: bridge
 
 volumes:
   postgres:
+  pgadmin:

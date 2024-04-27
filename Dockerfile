@@ -13,10 +13,11 @@ RUN \
  apk --purge del .build-deps
 
 RUN pip install Flask==2.2.2
+RUN pip install gunicorn
 
 COPY app app
 COPY migrations migrations
-COPY wikipedia.py run.py boot.sh ./
+COPY wikipedia.py run.py boot.sh test_data.py ./
 
 RUN chmod +x boot.sh
 ENV FLASK_APP=run.py

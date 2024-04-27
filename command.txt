@@ -1,30 +1,6 @@
-常用cmd：
+sudo docker login
 sudo docker build -t yuemanwai/wikipedia:latest .
 sudo docker push yuemanwai/wikipedia:latest
 
-chmod 755 get_preview.sh
-chmod 755 setup.sh
-
-cloud9 上用docker—compose：
-sudo docker login
-sudo docker-compose up -d
-sudo docker-compose down
-
-cloud9 上安裝docker：
-sudo yum install -y docker
-sudo service docker start
-
-cloud9 上安裝docker-compose：
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-docker-compose --version
-
-檢查port：
-sudo lsof -i :5000
-sudo docker ps
-
-swarm mode：
-sudo docker swarm init
-sudo docker stack deploy -c docker-compose.yml wikipediastack
-sudo docker stack rm wikipediastack
-sudo docker swarm leave --force
+sudo docker images
+sudo docker rmi -f <IMAGES_NAME>

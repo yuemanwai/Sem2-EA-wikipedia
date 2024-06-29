@@ -13,6 +13,7 @@ from werkzeug.utils import secure_filename
 import os
 import time
 import random
+import subprocess
 
 
 @app.before_request
@@ -26,7 +27,10 @@ def before_request():
 @app.route('/', methods=['GET'])
 @app.route('/wiki/Main_Page', methods=['GET'])
 def index():
-    count = Post.query.count()
+    try:
+        count = Post.query.count()
+    except:
+        subprocess.run(['python', 'test_data.py'])
     return render_template('index.html.j2', category=_('Main Page'), count=count)
 
 

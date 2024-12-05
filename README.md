@@ -1,3 +1,13 @@
+# How to Make It Run
+1. Create a codespace.
+2. Clone this repository.
+3. Move all files from /Sem2-EA-wikipedia to your own directory.
+4. Rebuild the codespace.
+5. Wait for the browser to pop up and settle.
+6. Run test_data.py.
+7. Refresh the fake Wikipedia webpage.
+
+
 # How to create translation 
 Run following commands
 ```
